@@ -204,12 +204,12 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
         <div
           className="rounded-lg p-4 border"
           style={{
-            backgroundColor: `var(--color-warning)`,
-            borderColor: `var(--color-border)`,
-            opacity: 0.15
+            backgroundColor: `var(--color-bg-tertiary)`,
+            borderColor: `var(--color-warning)`,
+            borderWidth: '2px'
           }}
         >
-          <h3 className="font-medium mb-2" style={{ color: 'var(--color-text)' }}>⚠️ Stumble Detected</h3>
+          <h3 className="font-medium mb-2" style={{ color: 'var(--color-warning)' }}>⚠️ Stumble Detected</h3>
           <p className="text-sm" style={{ color: 'var(--color-text)' }}>
             You paused for {(stumbles[stumbles.length - 1].duration / 1000).toFixed(1)}s. 
             This might indicate cognitive effort or searching for words.

@@ -198,11 +198,10 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
             {metrics.warnings.map((warning, idx) => (
               <div
                 key={idx}
-                className="rounded-lg p-3 flex gap-2"
+                className="rounded-lg p-3 flex gap-2 border-l-4"
                 style={{
-                  backgroundColor: 'var(--color-warning)',
-                  color: 'var(--color-text)',
-                  opacity: 0.15
+                  backgroundColor: 'var(--color-bg-tertiary)',
+                  borderLeftColor: 'var(--color-warning)'
                 }}
               >
                 <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--color-warning)' }} />
@@ -219,14 +218,13 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
       {!metrics.warnings || metrics.warnings.length === 0 && (
         <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--color-border)' }}>
           <div
-            className="rounded-lg p-3"
+            className="rounded-lg p-3 border-l-4"
             style={{
-              backgroundColor: 'var(--color-success)',
-              color: 'var(--color-text)',
-              opacity: 0.15
+              backgroundColor: 'var(--color-bg-tertiary)',
+              borderLeftColor: 'var(--color-success)'
             }}
           >
-            <p className="text-sm" style={{ color: 'var(--color-text)' }}>
+            <p className="text-sm" style={{ color: 'var(--color-success)' }}>
               ✓ Your writing appears authentic and natural!
             </p>
           </div>
