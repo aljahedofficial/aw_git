@@ -1,4 +1,4 @@
-import { AlertTriangle, TrendingDown, Zap } from 'lucide-react'
+import { TrendingDown, Zap } from 'lucide-react'
 
 interface MetricsPanelProps {
   metrics: {
@@ -190,46 +190,6 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
           </p>
         </div>
       </div>
-
-      {/* Warnings */}
-      {metrics.warnings && metrics.warnings.length > 0 && (
-        <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--color-border)' }}>
-          <div className="space-y-2">
-            {metrics.warnings.map((warning, idx) => (
-              <div
-                key={idx}
-                className="rounded-lg p-3 flex gap-2 border-l-4"
-                style={{
-                  backgroundColor: 'var(--color-bg-tertiary)',
-                  borderLeftColor: 'var(--color-warning)'
-                }}
-              >
-                <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--color-warning)' }} />
-                <p className="text-xs" style={{ color: 'var(--color-text)' }}>
-                  {warning}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Status Message */}
-      {!metrics.warnings || metrics.warnings.length === 0 && (
-        <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--color-border)' }}>
-          <div
-            className="rounded-lg p-3 border-l-4"
-            style={{
-              backgroundColor: 'var(--color-bg-tertiary)',
-              borderLeftColor: 'var(--color-success)'
-            }}
-          >
-            <p className="text-sm" style={{ color: 'var(--color-success)' }}>
-              ✓ Your writing appears authentic and natural!
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

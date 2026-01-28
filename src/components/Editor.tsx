@@ -16,6 +16,7 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
   const [stumbles, setStumbles] = useState<Array<{ time: number; duration: number }>>([])
   const [sourceTexts, setSourceTexts] = useState<string[]>([])
   const [currentWarnings, setCurrentWarnings] = useState<string[]>([])
+  const [matchedPhrases, setMatchedPhrases] = useState<string[]>([])
 
   const editor = useEditor({
     extensions: [
@@ -54,6 +55,7 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
         // Calculate similarity with sources
         let maxSimilarity = 0
         let similarityWarnings: string[] = []
+        const allMatchedPhrases: string[] = []
         
         sourceTexts.forEach(source => {
           const similarity = calculateSimilarityWithSource(text, source)
@@ -61,11 +63,26 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
             maxSimilarity = similarity.overallSimilarity
           }
           similarityWarnings.push(...similarity.warnings)
+          
+          // Extract matched phrases from warnings
+          similarity.warnings.forEach(warning => {
+            // Extract phrases from warning text (look for content in quotes)
+            const matches = warning.match(/"([^"]+)"/g)
+            if (matches) {
+              matches.forEach(match => {
+                const phrase = match.replace(/"/g, '')
+                if (phrase.split(' ').length >= 3) {
+                  allMatchedPhrases.push(phrase)
+                }
+              })
+            }
+          })
         })
 
         // Merge warnings
         const allWarnings = [...(analysis.warnings || []), ...similarityWarnings]
         setCurrentWarnings(allWarnings)
+        setMatchedPhrases(allMatchedPhrases)
 
         onMetricsUpdate({
           ...analysis,
@@ -197,7 +214,7 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
       </div>
 
       {/* Plagiarism & Similarity Detection */}
-      <PlagiarismPanel warnings={currentWarnings} />
+      <PlagiarismPanel warnings={currentWarnings} matchedPhrases={matchedPhrases} />
 
       {/* Stumble Alerts */}
       {stumbles.length > 0 && (
