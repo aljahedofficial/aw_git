@@ -1,4 +1,4 @@
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 
 interface SyntacticBurstinessProps {
   text: string
@@ -112,6 +112,7 @@ export default function SyntacticBurstiness({ text }: SyntacticBurstinessProps) 
               stroke="var(--color-text-secondary)"
               tick={{ fill: 'var(--color-text-secondary)', fontSize: 11 }}
               label={{ value: 'Word Count', angle: -90, position: 'insideLeft', fill: 'var(--color-text-secondary)' }}
+              domain={[0, 'auto']}
             />
             <Tooltip 
               contentStyle={{ 
@@ -147,6 +148,7 @@ export default function SyntacticBurstiness({ text }: SyntacticBurstinessProps) 
             <YAxis 
               stroke="var(--color-text-secondary)"
               tick={{ fill: 'var(--color-text-secondary)', fontSize: 11 }}
+              domain={[0, 'auto']}
             />
             <Tooltip 
               contentStyle={{ 
@@ -154,6 +156,17 @@ export default function SyntacticBurstiness({ text }: SyntacticBurstinessProps) 
                 border: '1px solid var(--color-border)',
                 borderRadius: '0.5rem',
                 color: 'var(--color-text)'
+              }}
+            />
+            <ReferenceLine 
+              y={avgLength} 
+              stroke="var(--color-warning)" 
+              strokeDasharray="5 5"
+              label={{ 
+                value: `Avg: ${avgLength.toFixed(1)}`, 
+                position: 'right',
+                fill: 'var(--color-warning)',
+                fontSize: 11
               }}
             />
             <Line 
