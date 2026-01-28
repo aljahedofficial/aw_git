@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { analyzeLinguisticFeatures, calculateSimilarityWithSource } from '../utils/linguisticAnalysis'
 import { findMatchedWords } from '../utils/suggestions'
 import PlagiarismPanel from './PlagiarismPanel'
+import EditorSuggestions from './EditorSuggestions'
 
 interface EditorProps {
   onMetricsUpdate: (metrics: any) => void
@@ -210,6 +211,11 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
         </div>
         <EditorContent editor={editor} />
       </div>
+
+      {/* Inline Synonym Suggestions */}
+      {matchedPhrases.length > 0 && (
+        <EditorSuggestions text={editor?.getText() || ''} matchedPhrases={matchedPhrases} />
+      )}
 
       {/* Plagiarism & Similarity Detection */}
       <PlagiarismPanel warnings={currentWarnings} matchedPhrases={matchedPhrases} />

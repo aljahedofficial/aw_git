@@ -94,28 +94,53 @@ export function generateParaphrase(phrase: string): string | null {
 
 function generateGenericParaphrase(sentence: string): string {
   // Simple paraphrase patterns
+  const lowerSentence = sentence.toLowerCase()
   const words = sentence.split(' ')
   
   // If sentence starts with common words, suggest alternatives
-  if (sentence.toLowerCase().startsWith('this shows that')) {
+  if (lowerSentence.startsWith('this shows that')) {
     return 'This demonstrates that...'
   }
-  if (sentence.toLowerCase().startsWith('it is important')) {
-    return 'Significantly, ...'
+  if (lowerSentence.startsWith('it is important')) {
+    return 'Significantly, this...'
   }
-  if (sentence.toLowerCase().startsWith('there are many')) {
+  if (lowerSentence.startsWith('there are many')) {
     return 'Numerous factors...'
   }
-  if (sentence.toLowerCase().startsWith('in this study')) {
+  if (lowerSentence.startsWith('in this study')) {
     return 'The present research...'
+  }
+  if (lowerSentence.startsWith('research shows')) {
+    return 'Evidence indicates...'
+  }
+  if (lowerSentence.startsWith('it has been')) {
+    return 'Historically,... OR Studies have found...'
+  }
+  if (lowerSentence.startsWith('the fact that')) {
+    return 'Given that..., it is clear that...'
+  }
+  if (lowerSentence.includes('can be seen')) {
+    return 'It is evident that...'
+  }
+  if (lowerSentence.includes('such as')) {
+    return 'For instance,... OR Including...'
+  }
+  if (lowerSentence.includes('according to')) {
+    return 'As [author] notes,... OR Research by [author] suggests...'
   }
   
   // For longer sentences, suggest restructuring
+  if (words.length > 20) {
+    return 'Consider breaking this into two shorter sentences or restructuring for clarity.'
+  }
   if (words.length > 15) {
-    return 'Consider breaking this into shorter sentences or restructuring for clarity.'
+    return 'Try rephrasing with active voice or using a different sentence structure.'
+  }
+  if (words.length > 10) {
+    return 'Consider using a more direct structure or shorter sentence.'
   }
   
-  return 'Try rephrasing with active voice or different sentence structure.'
+  return 'Try rephrasing with different vocabulary or sentence structure.'
 }
 
 export function findMatchedWords(text: string, sourceText: string): string[] {

@@ -102,20 +102,30 @@ export default function PlagiarismPanel({ warnings, matchedPhrases = [] }: Plagi
               {paraphraseSuggestions.length > 0 && (
                 <div>
                   <p className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-                    Paraphrase Ideas:
+                    📝 Paraphrase Ideas:
                   </p>
                   <div className="space-y-2">
-                    {paraphraseSuggestions.slice(0, 3).map((sugg, idx) => (
+                    {paraphraseSuggestions.map((sugg, idx) => (
                       <div 
                         key={idx}
-                        className="text-xs p-2 rounded"
-                        style={{ backgroundColor: 'var(--color-bg-secondary)' }}
+                        className="text-xs p-3 rounded border"
+                        style={{ 
+                          backgroundColor: 'var(--color-bg-secondary)',
+                          borderColor: 'var(--color-info)',
+                          borderWidth: '1px'
+                        }}
                       >
-                        <div style={{ color: 'var(--color-text-secondary)' }} className="mb-1">
-                          Original: <span className="italic">"{sugg.original}"</span>
+                        <div style={{ color: 'var(--color-text-secondary)' }} className="mb-2">
+                          <strong>Original:</strong> <span className="italic">"{sugg.original}"</span>
                         </div>
-                        <div style={{ color: 'var(--color-info)' }} className="font-medium">
-                          Try: {sugg.suggestion}
+                        <div 
+                          className="font-medium p-2 rounded"
+                          style={{ 
+                            color: 'var(--color-info)',
+                            backgroundColor: 'rgba(0, 184, 212, 0.1)'
+                          }}
+                        >
+                          💡 {sugg.suggestion}
                         </div>
                       </div>
                     ))}
