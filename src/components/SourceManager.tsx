@@ -7,11 +7,14 @@ interface Source {
   size: number
   type: string
   uploadedAt: string
+  content?: string
 }
 
 export default function SourceManager() {
   const [sources, setSources] = useState<Source[]>([])
   const [previewFile, setPreviewFile] = useState<Source | null>(null)
+  const [previewContent, setPreviewContent] = useState<string>('')
+  const [loadingPreview, setLoadingPreview] = useState(false)
 
   // Load sources from localStorage on mount
   useEffect(() => {
@@ -29,18 +32,51 @@ export default function SourceManager() {
     localStorage.setItem('source-files', JSON.stringify(newSources))
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newSources = Array.from(e.target.files).map(file => ({
-        id: Math.random().toString(36).substr(2, 9),
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        uploadedAt: new Date().toISOString(),
-      }))
+      const fileArray = Array.from(e.target.files)
+      const newSources: Source[] = []
+      
+      for (const file of fileArray) {
+        const content = await readFileContent(file)
+        newSources.push({
+          id: Math.random().toString(36).substr(2, 9),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          uploadedAt: new Date().toISOString(),
+          content
+        })
+      }
+      
       const updated = [...sources, ...newSources]
       setSources(updated)
       saveSourcesLocally(updated)
+    }
+  }
+
+  const readFileContent = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const content = e.target?.result as string
+        resolve(content || '')
+      }
+      reader.onerror = reject
+      reader.readAsText(file)
+    })
+  }
+
+  const handlePreview = async (source: Source) => {
+    setPreviewFile(source)
+    setLoadingPreview(true)
+    
+    if (source.content) {
+      setPreviewContent(source.content)
+      setLoadingPreview(false)
+    } else {
+      setPreviewContent('File content not available. Please re-upload the file.')
+      setLoadingPreview(false)
     }
   }
 
@@ -98,7 +134,7 @@ export default function SourceManager() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => setPreviewFile(source)}
+                    onClick={() => handlePreview(source)}
                     className="p-2 hover:bg-gray-600 rounded"
                     title="Preview file"
                   >
@@ -136,27 +172,40 @@ export default function SourceManager() {
       {/* File Preview Modal */}
       {previewFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg border border-gray-700 max-w-2xl w-full max-h-96 flex flex-col">
+          <div className="bg-gray-800 rounded-lg border border-gray-700 max-w-4xl w-full max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h3 className="font-semibold flex items-center space-x-2">
                 <FileText className="w-5 h-5" />
                 <span>{previewFile.name}</span>
               </h3>
               <button
-                onClick={() => setPreviewFile(null)}
+                onClick={() => {
+                  setPreviewFile(null)
+                  setPreviewContent('')
+                }}
                 className="p-1 hover:bg-gray-700 rounded"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="flex-1 overflow-auto p-4">
-              <div className="text-gray-400">
-                <p className="mb-2">File size: {(previewFile.size / 1024).toFixed(0)} KB</p>
-                <p className="mb-4 text-sm">Uploaded: {new Date(previewFile.uploadedAt).toLocaleString()}</p>
-                <p className="text-sm p-3 bg-gray-700 rounded border border-gray-600">
-                  Preview functionality for {previewFile.type || 'file'} files will be implemented in the next phase.
-                </p>
-              </div>
+              {loadingPreview ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-gray-400">Loading preview...</div>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-3 text-sm text-gray-400 flex items-center justify-between">
+                    <span>File size: {(previewFile.size / 1024).toFixed(0)} KB</span>
+                    <span>Uploaded: {new Date(previewFile.uploadedAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="bg-gray-900 rounded border border-gray-700 p-4 text-sm">
+                    <pre className="whitespace-pre-wrap font-mono text-gray-300 leading-relaxed">
+                      {previewContent || 'No content available'}
+                    </pre>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

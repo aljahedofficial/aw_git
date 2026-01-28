@@ -7,6 +7,7 @@ interface StoredFile {
   size: number
   type: string
   uploadedAt: string
+  content?: string
 }
 
 export default function BaselineManager() {
@@ -14,6 +15,8 @@ export default function BaselineManager() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [baseline, setBaseline] = useState<any>(null)
   const [previewFile, setPreviewFile] = useState<StoredFile | null>(null)
+  const [previewContent, setPreviewContent] = useState<string>('')
+  const [loadingPreview, setLoadingPreview] = useState(false)
 
   // Load files from localStorage on mount
   useEffect(() => {
@@ -31,18 +34,53 @@ export default function BaselineManager() {
     localStorage.setItem('baseline-files', JSON.stringify(newFiles))
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles: StoredFile[] = Array.from(e.target.files).map((file) => ({
-        id: Math.random().toString(36).substr(2, 9),
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        uploadedAt: new Date().toISOString(),
-      }))
+      const fileArray = Array.from(e.target.files)
+      const newFiles: StoredFile[] = []
+      
+      for (const file of fileArray) {
+        const content = await readFileContent(file)
+        newFiles.push({
+          id: Math.random().toString(36).substr(2, 9),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          uploadedAt: new Date().toISOString(),
+          content
+        })
+      }
+      
       const updatedFiles = [...files, ...newFiles]
       setFiles(updatedFiles)
       saveFilesToStorage(updatedFiles)
+    }
+  }
+
+  const readFileContent = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const content = e.target?.result as string
+        resolve(content || '')
+      }
+      reader.onerror = reject
+      reader.readAsText(file)
+    })
+  }
+
+  const handlePreview = async (file: StoredFile) => {
+    setPreviewFile(file)
+    setLoadingPreview(true)
+    
+    // If content is already stored, use it
+    if (file.content) {
+      setPreviewContent(file.content)
+      setLoadingPreview(false)
+    } else {
+      // Fallback message if no content
+      setPreviewContent('File content not available. Please re-upload the file.')
+      setLoadingPreview(false)
     }
   }
 
@@ -112,7 +150,7 @@ export default function BaselineManager() {
                       <p className="text-xs text-gray-400">{(file.size / 1024).toFixed(0)} KB</p>
                     </div>
                     <button
-                      onClick={() => setPreviewFile(file)}
+                      onClick={() => handlePreview(file)}
                       className="p-1 hover:bg-gray-600 rounded"
                       title="Preview file"
                     >
@@ -213,30 +251,44 @@ export default function BaselineManager() {
       {/* File Preview Modal */}
       {previewFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg border border-gray-700 max-w-2xl w-full max-h-96 flex flex-col">
+          <div className="bg-gray-800 rounded-lg border border-gray-700 max-w-4xl w-full max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h3 className="font-semibold flex items-center space-x-2">
                 <FileText className="w-5 h-5" />
                 <span>{previewFile.name}</span>
               </h3>
               <button
-                onClick={() => setPreviewFile(null)}
+                onClick={() => {
+                  setPreviewFile(null)
+                  setPreviewContent('')
+                }}
                 className="p-1 hover:bg-gray-700 rounded"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="flex-1 overflow-auto p-4">
-              <div className="text-gray-400">
-                <p className="mb-2">File size: {(previewFile.size / 1024).toFixed(0)} KB</p>
-                <p className="mb-4 text-sm">Uploaded: {new Date(previewFile.uploadedAt).toLocaleString()}</p>
-                <p className="text-sm p-3 bg-gray-700 rounded border border-gray-600">
-                  Preview functionality for {previewFile.type || 'file'} files will be implemented in the next phase.
-                </p>
-              </div>
+              {loadingPreview ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-gray-400">Loading preview...</div>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-3 text-sm text-gray-400 flex items-center justify-between">
+                    <span>File size: {(previewFile.size / 1024).toFixed(0)} KB</span>
+                    <span>Uploaded: {new Date(previewFile.uploadedAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="bg-gray-900 rounded border border-gray-700 p-4 text-sm">
+                    <pre className="whitespace-pre-wrap font-mono text-gray-300 leading-relaxed">
+                      {previewContent || 'No content available'}
+                    </pre>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      )}    </div>
+      )}
+    </div>
   )
 }
