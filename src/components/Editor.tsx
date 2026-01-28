@@ -74,18 +74,33 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
     },
   })
 
-  // Load source texts from localStorage
+  // Load source texts from localStorage and setup listener
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('source-files')
-      if (saved) {
-        const files = JSON.parse(saved)
-        const texts = files.map((f: any) => f.content || f.text || '').filter(Boolean)
-        setSourceTexts(texts)
+    const loadSources = () => {
+      try {
+        const saved = localStorage.getItem('source-files')
+        if (saved) {
+          const files = JSON.parse(saved)
+          const texts = files.map((f: any) => f.content || f.text || '').filter(Boolean)
+          setSourceTexts(texts)
+        }
+      } catch (e) {
+        console.error('Error loading source texts:', e)
       }
-    } catch (e) {
-      console.error('Error loading source texts:', e)
     }
+
+    // Load initially
+    loadSources()
+
+    // Listen for changes to source-files in localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'source-files') {
+        loadSources()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
   useEffect(() => {

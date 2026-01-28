@@ -98,22 +98,34 @@ export default function BaselineManager() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-        <h2 className="text-2xl font-bold mb-2">Baseline Calibration</h2>
-        <p className="text-gray-400 mb-6">
+      <div
+        className="rounded-lg border p-6"
+        style={{
+          backgroundColor: 'var(--color-bg-secondary)',
+          borderColor: 'var(--color-border)'
+        }}
+      >
+        <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Baseline Calibration</h2>
+        <p className="mb-6" style={{ color: 'var(--color-text-secondary)' }}>
           Upload 2-3 of your previous essays (2000+ words total) to establish your authentic writing voice.
         </p>
 
         {!baseline ? (
           <div className="space-y-6">
             {/* File Upload */}
-            <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center">
-              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <div
+              className="border-2 border-dashed rounded-lg p-8 text-center"
+              style={{
+                borderColor: 'var(--color-border)',
+                backgroundColor: 'var(--color-bg-tertiary)'
+              }}
+            >
+              <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--color-text-secondary)' }} />
               <label className="cursor-pointer">
-                <span className="text-primary-400 hover:text-primary-300 font-medium">
+                <span className="font-medium" style={{ color: 'var(--color-primary)' }}>
                   Click to upload
                 </span>
-                <span className="text-gray-400"> or drag and drop</span>
+                <span style={{ color: 'var(--color-text-secondary)' }}> or drag and drop</span>
                 <input
                   type="file"
                   multiple
@@ -122,7 +134,7 @@ export default function BaselineManager() {
                   className="hidden"
                 />
               </label>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm mt-2" style={{ color: 'var(--color-text-secondary)' }}>
                 TXT, DOC, DOCX, or PDF files
               </p>
             </div>
@@ -130,13 +142,20 @@ export default function BaselineManager() {
             {/* Uploaded Files */}
             {files.length > 0 && (
               <div className="space-y-2">
-                <h3 className="font-medium">Uploaded Files ({files.length}):</h3>
+                <h3 className="font-medium" style={{ color: 'var(--color-text)' }}>Uploaded Files ({files.length}):</h3>
                 {files.map((file) => (
-                  <div key={file.id} className="flex items-center space-x-3 bg-gray-700 rounded p-3">
-                    <FileText className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                  <div
+                    key={file.id}
+                    className="flex items-center space-x-3 rounded p-3"
+                    style={{
+                      backgroundColor: 'var(--color-bg-tertiary)',
+                      borderLeft: '3px solid var(--color-primary)'
+                    }}
+                  >
+                    <FileText className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{file.name}</p>
-                      <p className="text-xs text-gray-400">{(file.size / 1024).toFixed(0)} KB</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{file.name}</p>
+                      <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{(file.size / 1024).toFixed(0)} KB</p>
                     </div>
                     <button
                       onClick={() => handlePreview(file)}

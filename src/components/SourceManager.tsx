@@ -77,20 +77,32 @@ export default function SourceManager() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
-        <h2 className="text-2xl font-bold mb-2">Source File Management</h2>
-        <p className="text-gray-400 mb-6">
+      <div
+        className="rounded-lg border p-6"
+        style={{
+          backgroundColor: 'var(--color-bg-secondary)',
+          borderColor: 'var(--color-border)'
+        }}
+      >
+        <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Source File Management</h2>
+        <p className="mb-6" style={{ color: 'var(--color-text-secondary)' }}>
           Upload your research sources to detect structural plagiarism and ensure independent synthesis.
         </p>
 
         {/* Upload Area */}
-        <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center mb-6">
-          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <div
+          className="border-2 border-dashed rounded-lg p-8 text-center mb-6"
+          style={{
+            borderColor: 'var(--color-border)',
+            backgroundColor: 'var(--color-bg-tertiary)'
+          }}
+        >
+          <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--color-text-secondary)' }} />
           <label className="cursor-pointer">
-            <span className="text-primary-400 hover:text-primary-300 font-medium">
+            <span className="font-medium" style={{ color: 'var(--color-primary)' }}>
               Click to upload sources
             </span>
-            <span className="text-gray-400"> or drag and drop</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}> or drag and drop</span>
             <input
               type="file"
               multiple
@@ -99,7 +111,7 @@ export default function SourceManager() {
               className="hidden"
             />
           </label>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm mt-2" style={{ color: 'var(--color-text-secondary)' }}>
             PDF, DOC, DOCX, or TXT files (max 50MB each)
           </p>
         </div>
@@ -107,16 +119,20 @@ export default function SourceManager() {
         {/* Source List */}
         {sources.length > 0 ? (
           <div className="space-y-3">
-            <h3 className="font-medium text-lg">Uploaded Sources ({sources.length})</h3>
+            <h3 className="font-medium text-lg" style={{ color: 'var(--color-text)' }}>Uploaded Sources ({sources.length})</h3>
             {sources.map(source => (
               <div
                 key={source.id}
-                className="flex items-center space-x-4 bg-gray-700 rounded-lg p-4"
+                className="flex items-center space-x-4 rounded-lg p-4"
+                style={{
+                  backgroundColor: 'var(--color-bg-tertiary)',
+                  borderLeft: '3px solid var(--color-primary)'
+                }}
               >
-                <FileText className="w-8 h-8 text-blue-400 flex-shrink-0" />
+                <FileText className="w-8 h-8 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium truncate">{source.name}</h4>
-                  <p className="text-sm text-gray-400">
+                  <h4 className="font-medium truncate" style={{ color: 'var(--color-text)' }}>{source.name}</h4>
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                     {(source.size / 1024).toFixed(0)} KB · 
                     Uploaded {new Date(source.uploadedAt).toLocaleDateString()}
                   </p>
@@ -124,16 +140,24 @@ export default function SourceManager() {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handlePreview(source)}
-                    className="p-2 hover:bg-gray-600 rounded"
+                    className="p-2 rounded"
+                    style={{
+                      backgroundColor: 'var(--color-bg-secondary)',
+                      color: 'var(--color-text-secondary)'
+                    }}
                     title="Preview file"
                   >
-                    <Eye className="w-5 h-5 text-gray-400 hover:text-gray-300" />
+                    <Eye className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => removeSource(source.id)}
-                    className="p-2 hover:bg-red-900/20 rounded"
+                    className="p-2 rounded"
+                    style={{
+                      backgroundColor: 'var(--color-danger)',
+                      color: 'white'
+                    }}
                   >
-                    <X className="w-5 h-5 text-red-400" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
               </div>

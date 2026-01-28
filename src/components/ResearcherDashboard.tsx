@@ -85,19 +85,25 @@ export default function ResearcherDashboard() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">Researcher Dashboard</h2>
-        <p className="text-gray-400">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Researcher Dashboard</h2>
+        <p style={{ color: 'var(--color-text-secondary)' }}>
           View aggregate metrics and export data for analysis
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-gray-800 rounded-lg border border-gray-700 p-4">
+        <div
+          className="rounded-lg border p-4"
+          style={{
+            backgroundColor: 'var(--color-bg-secondary)',
+            borderColor: 'var(--color-border)'
+          }}
+        >
           <div className="flex items-center justify-between mb-2">
-            <Calendar className="w-5 h-5 text-blue-400" />
+            <Calendar className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
           </div>
-          <div className="text-2xl font-bold">{stats.totalSessions}</div>
+          <div className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>{stats.totalSessions}</div>
           <div className="text-sm text-gray-400">Total Sessions</div>
         </div>
 

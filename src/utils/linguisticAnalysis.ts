@@ -198,54 +198,100 @@ export function calculateSimilarityWithSource(userText: string, sourceText: stri
 } {
   const warnings: string[] = []
   
-  if (!sourceText || sourceText.length < 50) {
+  if (!sourceText || sourceText.length < 20) {
     return { overallSimilarity: 0, phraseMatches: 0, ngramOverlap: 0, warnings: [] }
   }
 
-  // Normalize text
-  const normalize = (text: string) => text.toLowerCase().trim()
+  // Normalize text (remove punctuation, extra spaces, but keep word order)
+  const normalize = (text: string) => 
+    text.toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim()
+  
   const userNorm = normalize(userText)
   const sourceNorm = normalize(sourceText)
 
-  // 1. Phrase-level matching (sequences of 4+ words)
+  // 1. Direct substring matching (exact copy detection)
+  const sourceWords = sourceNorm.split(/\s+/)
+  
+  let directMatches = 0
+  for (let i = 0; i <= sourceWords.length - 5; i++) {
+    const sourcePhrase = sourceWords.slice(i, i + 5).join(' ')
+    if (userNorm.includes(sourcePhrase)) {
+      directMatches++
+    }
+  }
+  const directMatchRatio = Math.min(directMatches / Math.max(sourceWords.length / 5, 1), 1)
+
+  // 2. Phrase-level matching (sequences of 4+ words)
   const userPhrases = extractPhrases(userNorm, 4)
   const sourcePhrases = extractPhrases(sourceNorm, 4)
-  const matchedPhrases = userPhrases.filter(p => sourcePhrases.some(sp => sp.includes(p) || p.includes(sp)))
+  const matchedPhrases = userPhrases.filter(p => 
+    sourcePhrases.some(sp => sp.includes(p) || p.includes(sp) || calculateStringSimilarity(p, sp) > 0.75)
+  )
   const phraseMatchRatio = matchedPhrases.length / Math.max(userPhrases.length, 1)
 
-  // 2. N-gram overlap (3-word sequences)
+  // 3. N-gram overlap (3-word sequences) - very good for catching paraphrases
   const userNgrams = getNgrams(userNorm, 3)
   const sourceNgrams = getNgrams(sourceNorm, 3)
   const commonNgrams = userNgrams.filter(ng => sourceNgrams.includes(ng))
   const ngramRatio = commonNgrams.length / Math.max(userNgrams.length, 1)
 
-  // 3. Sentence structure similarity (paraphrase detection)
-  const userSentences = userNorm.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10)
-  const sourceSentences = sourceNorm.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10)
+  // 4. Bigram overlap (2-word sequences) - catches paraphrases
+  const userBigrams = getNgrams(userNorm, 2)
+  const sourceBigrams = getNgrams(sourceNorm, 2)
+  const commonBigrams = userBigrams.filter(bg => sourceBigrams.includes(bg))
+  const bigramRatio = commonBigrams.length / Math.max(userBigrams.length, 1)
+
+  // 5. Sentence structure similarity (paraphrase detection)
+  const userSentences = userNorm.split(/[.!?]+/).map(s => s.trim()).filter(s => s.split(/\s+/).length > 5)
+  const sourceSentences = sourceNorm.split(/[.!?]+/).map(s => s.trim()).filter(s => s.split(/\s+/).length > 5)
   
   let structureSimilarity = 0
+  let similarSentenceCount = 0
+  
   userSentences.forEach(us => {
     sourceSentences.forEach(ss => {
       const similarity = calculateStringSimilarity(us, ss)
-      if (similarity > 0.6) {
-        structureSimilarity += similarity / sourceSentences.length
+      if (similarity > 0.65) {
+        structureSimilarity += similarity
+        similarSentenceCount++
       }
     })
   })
-  structureSimilarity = structureSimilarity / Math.max(userSentences.length, 1)
+  
+  if (userSentences.length > 0) {
+    structureSimilarity = (structureSimilarity / userSentences.length)
+  }
 
-  // Overall similarity (weighted)
-  const overallSimilarity = Math.round((phraseMatchRatio * 0.35 + ngramRatio * 0.35 + structureSimilarity * 0.3) * 100) / 100
+  // Overall similarity (weighted heavily towards direct and phrase matches)
+  // This catches both copy-paste and paraphrasing
+  const overallSimilarity = Math.min(
+    Math.round((
+      directMatchRatio * 0.25 +
+      phraseMatchRatio * 0.25 +
+      ngramRatio * 0.25 +
+      bigramRatio * 0.15 +
+      structureSimilarity * 0.1
+    ) * 100) / 100,
+    1
+  )
 
-  // Generate warnings
-  if (overallSimilarity > 0.5) {
+  // Generate warnings with lower thresholds for detection
+  if (directMatchRatio > 0.15) {
+    warnings.push(`🚨 PLAGIARISM DETECTED: ${(directMatchRatio * 100).toFixed(0)}% of source text found directly`)
+  } else if (overallSimilarity > 0.45) {
     warnings.push(`⚠️ High similarity to source material (${(overallSimilarity * 100).toFixed(0)}%)`)
   }
-  if (phraseMatchRatio > 0.4) {
-    warnings.push(`⚠️ Multiple phrases match source (${matchedPhrases.length} phrases)`)
+  
+  if (phraseMatchRatio > 0.25) {
+    warnings.push(`⚠️ Multiple phrases match source (${matchedPhrases.length} matching phrases)`)
   }
-  if (ngramRatio > 0.3) {
-    warnings.push(`⚠️ Sentence structure too similar to source`)
+  
+  if (ngramRatio > 0.25) {
+    warnings.push(`⚠️ Sentence structure very similar to source`)
+  }
+
+  if (similarSentenceCount > 2) {
+    warnings.push(`⚠️ ${similarSentenceCount} sentences structurally match source`)
   }
 
   return {
