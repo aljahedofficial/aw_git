@@ -4,10 +4,12 @@ import MetricsPanel from './components/MetricsPanel'
 import BaselineManager from './components/BaselineManager'
 import ShadowPanel from './components/ShadowPanel'
 import SourceManager from './components/SourceManager'
-import { FileText, Activity, Target, FileUp } from 'lucide-react'
+import OnboardingTutorial from './components/OnboardingTutorial'
+import ResearcherDashboard from './components/ResearcherDashboard'
+import { FileText, Activity, Target, FileUp, BarChart2 } from 'lucide-react'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'editor' | 'baseline' | 'sources'>('editor')
+  const [activeTab, setActiveTab] = useState<'editor' | 'baseline' | 'sources' | 'dashboard'>('editor')
   const [metrics, setMetrics] = useState({
     humanityScore: 75,
     burstiness: 6.2,
@@ -73,9 +75,23 @@ function App() {
               <FileUp className="w-4 h-4" />
               <span>Sources</span>
             </button>
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors ${
+                activeTab === 'dashboard'
+                  ? 'border-primary-500 text-primary-400'
+                  : 'border-transparent text-gray-400 hover:text-gray-300'
+              }`}
+            >
+              <BarChart2 className="w-4 h-4" />
+              <span>Dashboard</span>
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Onboarding Tutorial */}
+      <OnboardingTutorial onComplete={() => {}} />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
@@ -92,6 +108,7 @@ function App() {
         )}
         {activeTab === 'baseline' && <BaselineManager />}
         {activeTab === 'sources' && <SourceManager />}
+        {activeTab === 'dashboard' && <ResearcherDashboard />}
       </main>
 
       {/* Footer */}

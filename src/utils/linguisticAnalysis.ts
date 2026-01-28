@@ -1,5 +1,5 @@
-// Linguistic analysis utilities
-// This is a simplified version - in production, you'd use spaCy via API or compromise.js
+// Linguistic analysis utilities with Compromise.js for advanced NLP
+import nlp from 'compromise'
 
 export interface LinguisticAnalysis {
   humanityScore: number
@@ -10,11 +10,21 @@ export interface LinguisticAnalysis {
     turnitin: number
     originality: number
   }
+  posDistribution?: {
+    nouns: number
+    verbs: number
+    adjectives: number
+    adverbs: number
+  }
+  syntacticComplexity?: number
 }
 
 export function analyzeLinguisticFeatures(text: string): LinguisticAnalysis {
+  // Use Compromise.js for NLP analysis
+  const doc = nlp(text)
+  
   // Split into sentences
-  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0)
+  const sentences = doc.sentences().out('array')
   
   if (sentences.length < 3) {
     return {
@@ -26,33 +36,55 @@ export function analyzeLinguisticFeatures(text: string): LinguisticAnalysis {
   }
 
   // Calculate sentence lengths
-  const sentenceLengths = sentences.map(s => s.trim().split(/\s+/).length)
-  const meanLength = sentenceLengths.reduce((a, b) => a + b, 0) / sentenceLengths.length
-  const variance = sentenceLengths.reduce((sum, len) => sum + Math.pow(len - meanLength, 2), 0) / sentenceLengths.length
+  const sentenceLengths = sentences.map((s: string) => s.trim().split(/\s+/).length)
+  const meanLength = sentenceLengths.reduce((a: number, b: number) => a + b, 0) / sentenceLengths.length
+  const variance = sentenceLengths.reduce((sum: number, len: number) => sum + Math.pow(len - meanLength, 2), 0) / sentenceLengths.length
   const stdDev = Math.sqrt(variance)
 
   // Burstiness calculation (standard deviation of sentence lengths)
   const burstiness = stdDev
 
-  // Calculate lexical diversity (unique words / total words)
-  const words = text.toLowerCase().split(/\s+/)
-  const uniqueWords = new Set(words)
+  // Calculate lexical diversity using Compromise.js
+  const words = doc.terms().out('array')
+  const uniqueWords = new Set(words.map((w: string) => w.toLowerCase()))
   const lexicalDiversity = uniqueWords.size / words.length
+
+  // POS tagging with Compromise.js
+  const nouns = doc.nouns().length
+  const verbs = doc.verbs().length
+  const adjectives = doc.adjectives().length
+  const adverbs = doc.adverbs().length
+  const totalTerms = words.length || 1
+
+  const posDistribution = {
+    nouns: nouns / totalTerms,
+    verbs: verbs / totalTerms,
+    adjectives: adjectives / totalTerms,
+    adverbs: adverbs / totalTerms
+  }
+
+  // Syntactic complexity (clauses, conjunctions)
+  const clauses = doc.match('#Conjunction').length
+  const syntacticComplexity = clauses / sentences.length
 
   // Count glue words (function words that are overused in AI text)
   const glueWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by']
-  const glueWordCount = words.filter(w => glueWords.includes(w)).length
+  const glueWordCount = words.filter((w: string) => glueWords.includes(w.toLowerCase())).length
   const glueWordRatio = glueWordCount / words.length
 
   // Humanity Score calculation
   // Higher lexical diversity = more human
   // Higher burstiness = more human
   // Lower glue word ratio = more human
+  // Balanced POS distribution = more human
   const diversityScore = Math.min(lexicalDiversity * 100, 100)
   const burstinessScore = Math.min((burstiness / 10) * 100, 100)
   const glueScore = Math.max(100 - (glueWordRatio * 300), 0)
   
-  const humanityScore = (diversityScore * 0.4 + burstinessScore * 0.4 + glueScore * 0.2)
+  // POS balance score (penalize if too verb-heavy or noun-heavy)
+  const posBalance = 100 - Math.abs(posDistribution.nouns - 0.25) * 200 - Math.abs(posDistribution.verbs - 0.20) * 200
+  
+  const humanityScore = (diversityScore * 0.3 + burstinessScore * 0.3 + glueScore * 0.2 + posBalance * 0.2)
 
   // Shadow scores (inverse of humanity indicators)
   // These are simplified heuristics - real detectors use complex ML models
@@ -72,7 +104,9 @@ export function analyzeLinguisticFeatures(text: string): LinguisticAnalysis {
       gptZero: parseFloat(gptZero.toFixed(2)),
       turnitin: parseFloat(turnitin.toFixed(2)),
       originality: parseFloat(originality.toFixed(2))
-    }
+    },
+    posDistribution,
+    syntacticComplexity
   }
 }
 
