@@ -5,7 +5,7 @@ import CharacterCount from '@tiptap/extension-character-count'
 import { useEffect, useState } from 'react'
 import { analyzeLinguisticFeatures, calculateSimilarityWithSource } from '../utils/linguisticAnalysis'
 import { findMatchedWords } from '../utils/suggestions'
-import { getSynonyms } from '../utils/thesaurus'
+import { getEnhancedSynonyms } from '../utils/thesaurusService'
 import PlagiarismPanel from './PlagiarismPanel'
 import EditorSuggestions from './EditorSuggestions'
 import SyntacticBurstiness from './SyntacticBurstiness'
@@ -31,7 +31,7 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
   const [suggestionPosition, setSuggestionPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
 
   // Helper: Detect current word at cursor position
-  const detectCurrentWord = () => {
+  const detectCurrentWord = async () => {
     if (!editor) return
 
     const text = editor.getText()
@@ -62,11 +62,16 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
       
       // Only show suggestion if word is at least 2 chars
       if (word.length >= 2) {
-        const synonyms = getSynonyms(word)
+        // Get enhanced synonyms with API + part-of-speech awareness
+        const synonyms = await getEnhancedSynonyms(word, text, {
+          context: 'academic', // Prefer academic register for writing
+          maxResults: 8,
+          includeFrequency: true
+        })
 
         if (synonyms && synonyms.length > 0) {
           setCurrentWord(word)
-          setSynonymSuggestions(synonyms.slice(0, 8)) // Limit to 8 suggestions
+          setSynonymSuggestions(synonyms)
           
           // Calculate position for suggestion popup
           try {
