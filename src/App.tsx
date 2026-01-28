@@ -7,12 +7,14 @@ import SourceManager from './components/SourceManager'
 import OnboardingTutorial from './components/OnboardingTutorial'
 import ResearcherDashboard from './components/ResearcherDashboard'
 import SentenceLengthGraph from './components/SentenceLengthGraph'
+import SentenceLengthDistribution from './components/SentenceLengthDistribution'
 import ThemeSelector from './components/ThemeSelector'
 import { FileText, Activity, Target, FileUp, BarChart2 } from 'lucide-react'
 import { getStoredTheme, applyTheme, themes } from './utils/themes'
 
 function App() {
   const [activeTab, setActiveTab] = useState<'editor' | 'baseline' | 'sources' | 'dashboard'>('editor')
+  const [editorText, setEditorText] = useState('')
   const [metrics, setMetrics] = useState({
     humanityScore: 75,
     burstiness: 6.2,
@@ -121,11 +123,15 @@ function App() {
         {activeTab === 'editor' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <Editor onMetricsUpdate={setMetrics} />
+              <Editor 
+                onMetricsUpdate={setMetrics}
+                onTextChange={setEditorText}
+              />
             </div>
             <div className="space-y-6">
               <MetricsPanel metrics={metrics} />
               <SentenceLengthGraph burstiness={metrics.burstiness} />
+              <SentenceLengthDistribution text={editorText} />
               <ShadowPanel scores={metrics.shadowScores} />
             </div>
           </div>

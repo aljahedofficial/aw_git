@@ -4,13 +4,15 @@ import Placeholder from '@tiptap/extension-placeholder'
 import CharacterCount from '@tiptap/extension-character-count'
 import { useEffect, useState } from 'react'
 import { analyzeLinguisticFeatures, calculateSimilarityWithSource } from '../utils/linguisticAnalysis'
+import { findMatchedWords } from '../utils/suggestions'
 import PlagiarismPanel from './PlagiarismPanel'
 
 interface EditorProps {
   onMetricsUpdate: (metrics: any) => void
+  onTextChange?: (text: string) => void
 }
 
-export default function Editor({ onMetricsUpdate }: EditorProps) {
+export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
   const [_keystrokeData, setKeystrokeData] = useState<number[]>([])
   const [lastKeystrokeTime, setLastKeystrokeTime] = useState<number>(Date.now())
   const [stumbles, setStumbles] = useState<Array<{ time: number; duration: number }>>([])
@@ -49,6 +51,12 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
     },
     onUpdate: ({ editor }) => {
       const text = editor.getText()
+      
+      // Pass text to parent for real-time display
+      if (onTextChange) {
+        onTextChange(text)
+      }
+      
       if (text.length > 10) {
         const analysis = analyzeLinguisticFeatures(text)
         
@@ -64,22 +72,12 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
           }
           similarityWarnings.push(...similarity.warnings)
           
-          // Extract matched phrases from warnings
-          similarity.warnings.forEach(warning => {
-            // Extract phrases from warning text (look for content in quotes)
-            const matches = warning.match(/"([^"]+)"/g)
-            if (matches) {
-              matches.forEach(match => {
-                const phrase = match.replace(/"/g, '')
-                if (phrase.split(' ').length >= 3) {
-                  allMatchedPhrases.push(phrase)
-                }
-              })
-            }
-          })
+          // Find actual matched phrases directly from text comparison
+          const matches = findMatchedWords(text, source)
+          allMatchedPhrases.push(...matches)
         })
 
-        // Merge warnings
+        // Merge warnings and update state immediately for real-time display
         const allWarnings = [...(analysis.warnings || []), ...similarityWarnings]
         setCurrentWarnings(allWarnings)
         setMatchedPhrases(allMatchedPhrases)

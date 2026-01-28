@@ -119,24 +119,25 @@ function generateGenericParaphrase(sentence: string): string {
 }
 
 export function findMatchedWords(text: string, sourceText: string): string[] {
-  const textWords = text.toLowerCase().split(/\s+/)
-  const sourceWords = sourceText.toLowerCase().split(/\s+/)
-  
+  const sourceLower = sourceText.toLowerCase()
+  const textWords = text.split(/\s+/)
   const matches: string[] = []
   
-  // Find 3+ word sequences that match
-  for (let i = 0; i < textWords.length - 2; i++) {
+  // Find 3-7 word sequences that match
+  for (let i = 0; i < textWords.length; i++) {
     for (let len = 3; len <= 7; len++) {
       if (i + len > textWords.length) break
       
-      const sequence = textWords.slice(i, i + len).join(' ')
-      const sourceSequence = sourceWords.join(' ')
+      const sequence = textWords.slice(i, i + len)
+      const sequenceLower = sequence.join(' ').toLowerCase()
       
-      if (sourceSequence.includes(sequence)) {
-        // Get original case from text
-        const originalWords = text.split(/\s+/)
-        const originalSequence = originalWords.slice(i, i + len).join(' ')
-        matches.push(originalSequence)
+      // Check if this sequence exists in source
+      if (sourceLower.includes(sequenceLower) && sequenceLower.length > 10) {
+        const originalSequence = sequence.join(' ')
+        // Avoid duplicates
+        if (!matches.some(m => m.toLowerCase() === sequenceLower)) {
+          matches.push(originalSequence)
+        }
       }
     }
   }
