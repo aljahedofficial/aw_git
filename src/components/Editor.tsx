@@ -5,9 +5,11 @@ import CharacterCount from '@tiptap/extension-character-count'
 import { useEffect, useState } from 'react'
 import { analyzeLinguisticFeatures, calculateSimilarityWithSource } from '../utils/linguisticAnalysis'
 import { findMatchedWords } from '../utils/suggestions'
+import { getSynonyms } from '../utils/thesaurus'
 import PlagiarismPanel from './PlagiarismPanel'
 import EditorSuggestions from './EditorSuggestions'
 import SyntacticBurstiness from './SyntacticBurstiness'
+import SynonymSuggestion from './SynonymSuggestion'
 
 interface EditorProps {
   onMetricsUpdate: (metrics: any) => void
@@ -21,6 +23,94 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
   const [sourceTexts, setSourceTexts] = useState<string[]>([])
   const [currentWarnings, setCurrentWarnings] = useState<string[]>([])
   const [matchedPhrases, setMatchedPhrases] = useState<string[]>([])
+  
+  // Synonym suggestion state
+  const [currentWord, setCurrentWord] = useState<string>('')
+  const [synonymSuggestions, setSynonymSuggestions] = useState<string[]>([])
+  const [showSynonymSuggestion, setShowSynonymSuggestion] = useState<boolean>(false)
+  const [suggestionPosition, setSuggestionPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
+
+  // Helper: Detect current word at cursor position
+  const detectCurrentWord = () => {
+    if (!editor) return
+
+    const text = editor.getText()
+    const { from } = editor.state.selection
+    
+    // Find word boundaries around cursor
+    let start = from - 1
+    let end = from
+
+    // Find start of word
+    while (start >= 0 && /\w/.test(text[start])) {
+      start--
+    }
+    start++ // Move to first letter
+
+    // Find end of word
+    while (end < text.length && /\w/.test(text[end])) {
+      end++
+    }
+
+    if (start < end) {
+      const word = text.substring(start, end)
+      const synonyms = getSynonyms(word)
+
+      if (synonyms.length > 0) {
+        setCurrentWord(word)
+        setSynonymSuggestions(synonyms)
+        
+        // Calculate position for suggestion popup (above the word)
+        const { node } = editor.view.domAtPos(from)
+        if (node && node.parentElement) {
+          const rect = node.parentElement.getBoundingClientRect()
+          setSuggestionPosition({
+            top: rect.top - 150,
+            left: rect.left
+          })
+        }
+        
+        setShowSynonymSuggestion(true)
+      } else {
+        setShowSynonymSuggestion(false)
+      }
+    } else {
+      setShowSynonymSuggestion(false)
+    }
+  }
+
+  // Helper: Replace current word with synonym
+  const replacedCurrentWord = (synonym: string) => {
+    if (!editor || !currentWord) return
+
+    const text = editor.getText()
+    const { from } = editor.state.selection
+    
+    // Find word boundaries
+    let start = from - 1
+    let end = from
+
+    while (start >= 0 && /\w/.test(text[start])) {
+      start--
+    }
+    start++
+
+    while (end < text.length && /\w/.test(text[end])) {
+      end++
+    }
+
+    if (start < end && text.substring(start, end).toLowerCase() === currentWord.toLowerCase()) {
+      // Replace the word - use deleteRange instead of setSelection
+      editor
+        .chain()
+        .focus()
+        .deleteRange({ from: start + 1, to: end + 1 })
+        .insertContent(synonym)
+        .run()
+    }
+
+    setShowSynonymSuggestion(false)
+  }
 
   const editor = useEditor({
     extensions: [
@@ -35,7 +125,7 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
       attributes: {
         class: 'prose max-w-none focus:outline-none min-h-[400px] p-6'
       },
-      handleKeyDown: (_view, _event) => {
+      handleKeyDown: (_view: any, event: KeyboardEvent) => {
         const now = Date.now()
         const interval = now - lastKeystrokeTime
         
@@ -47,6 +137,25 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
         if (interval > 2000) {
           setStumbles(prev => [...prev, { time: now, duration: interval }])
         }
+
+        // Handle Tab key for synonym selection
+        if (event.key === 'Tab' && showSynonymSuggestion && synonymSuggestions.length > 0) {
+          event.preventDefault()
+          const selectedSynonym = synonymSuggestions[0]
+          replacedCurrentWord(selectedSynonym)
+          return true
+        }
+
+        // Handle Escape to close suggestion
+        if (event.key === 'Escape') {
+          setShowSynonymSuggestion(false)
+          return false
+        }
+
+        // Detect current word after a short delay
+        setTimeout(() => {
+          detectCurrentWord()
+        }, 0)
 
         return false
       },
@@ -164,7 +273,7 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
   const charCount = editor.storage.characterCount.characters()
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 relative">
       <div
         className="rounded-lg border overflow-hidden"
         style={{
@@ -210,7 +319,18 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
             </button>
           </div>
         </div>
-        <EditorContent editor={editor} />
+        
+        {/* Synonym Suggestion Popup */}
+        <div className="relative">
+          <EditorContent editor={editor} />
+          <SynonymSuggestion
+            word={currentWord}
+            suggestions={synonymSuggestions}
+            onSelect={replacedCurrentWord}
+            visible={showSynonymSuggestion}
+            position={suggestionPosition}
+          />
+        </div>
       </div>
 
       {/* Inline Synonym Suggestions */}
