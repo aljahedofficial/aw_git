@@ -37,46 +37,61 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
     const text = editor.getText()
     const { from } = editor.state.selection
     
+    if (from <= 0) {
+      setShowSynonymSuggestion(false)
+      return
+    }
+    
     // Find word boundaries around cursor
     let start = from - 1
     let end = from
 
-    // Find start of word
+    // Find start of word (move backwards while we see word characters)
     while (start >= 0 && /\w/.test(text[start])) {
       start--
     }
-    start++ // Move to first letter
+    start++ // Move to first letter of word
 
-    // Find end of word
+    // Find end of word (move forwards while we see word characters)
     while (end < text.length && /\w/.test(text[end])) {
       end++
     }
 
     if (start < end) {
-      const word = text.substring(start, end)
-      const synonyms = getSynonyms(word)
+      const word = text.substring(start, end).toLowerCase()
+      
+      // Only show suggestion if word is at least 2 chars
+      if (word.length >= 2) {
+        const synonyms = getSynonyms(word)
 
-      if (synonyms.length > 0) {
-        setCurrentWord(word)
-        setSynonymSuggestions(synonyms)
-        
-        // Calculate position for suggestion popup (above the word)
-        const { node } = editor.view.domAtPos(from)
-        if (node && node.parentElement) {
-          const rect = node.parentElement.getBoundingClientRect()
-          setSuggestionPosition({
-            top: rect.top - 150,
-            left: rect.left
-          })
+        if (synonyms && synonyms.length > 0) {
+          setCurrentWord(word)
+          setSynonymSuggestions(synonyms.slice(0, 8)) // Limit to 8 suggestions
+          
+          // Calculate position for suggestion popup
+          try {
+            const coords = editor.view.coordsAtPos(from)
+            if (coords) {
+              setSuggestionPosition({
+                top: coords.top - 140, // Position above cursor
+                left: coords.left
+              })
+            }
+          } catch (e) {
+            // Fallback if coordsAtPos fails
+            setSuggestionPosition({
+              top: 100,
+              left: 200
+            })
+          }
+          
+          setShowSynonymSuggestion(true)
+          return
         }
-        
-        setShowSynonymSuggestion(true)
-      } else {
-        setShowSynonymSuggestion(false)
       }
-    } else {
-      setShowSynonymSuggestion(false)
     }
+    
+    setShowSynonymSuggestion(false)
   }
 
   // Helper: Replace current word with synonym
@@ -93,23 +108,26 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
     while (start >= 0 && /\w/.test(text[start])) {
       start--
     }
-    start++
+    start++ // Move to first letter of word
 
     while (end < text.length && /\w/.test(text[end])) {
       end++
     }
 
-    if (start < end && text.substring(start, end).toLowerCase() === currentWord.toLowerCase()) {
-      // Replace the word - use deleteRange instead of setSelection
+    if (start < end) {
+      // Tiptap uses 1-based indices for commands, not 0-based
+      // We need to add 1 to both start and end positions
       editor
         .chain()
         .focus()
         .deleteRange({ from: start + 1, to: end + 1 })
         .insertContent(synonym)
         .run()
+      
+      setShowSynonymSuggestion(false)
+      setCurrentWord('')
+      setSynonymSuggestions([])
     }
-
-    setShowSynonymSuggestion(false)
   }
 
   const editor = useEditor({
