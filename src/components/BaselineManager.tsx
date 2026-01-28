@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Upload, FileText, CheckCircle, AlertCircle, Eye, X } from 'lucide-react'
+import { readFile } from '../utils/fileReader'
 
 interface StoredFile {
   id: string
@@ -40,7 +41,7 @@ export default function BaselineManager() {
       const newFiles: StoredFile[] = []
       
       for (const file of fileArray) {
-        const content = await readFileContent(file)
+        const content = await readFile(file)
         newFiles.push({
           id: Math.random().toString(36).substr(2, 9),
           name: file.name,
@@ -55,18 +56,6 @@ export default function BaselineManager() {
       setFiles(updatedFiles)
       saveFilesToStorage(updatedFiles)
     }
-  }
-
-  const readFileContent = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const content = e.target?.result as string
-        resolve(content || '')
-      }
-      reader.onerror = reject
-      reader.readAsText(file)
-    })
   }
 
   const handlePreview = async (file: StoredFile) => {

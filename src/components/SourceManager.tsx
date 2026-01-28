@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Upload, FileText, X, Eye } from 'lucide-react'
+import { readFile } from '../utils/fileReader'
 
 interface Source {
   id: string
@@ -38,7 +39,7 @@ export default function SourceManager() {
       const newSources: Source[] = []
       
       for (const file of fileArray) {
-        const content = await readFileContent(file)
+        const content = await readFile(file)
         newSources.push({
           id: Math.random().toString(36).substr(2, 9),
           name: file.name,
@@ -53,18 +54,6 @@ export default function SourceManager() {
       setSources(updated)
       saveSourcesLocally(updated)
     }
-  }
-
-  const readFileContent = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const content = e.target?.result as string
-        resolve(content || '')
-      }
-      reader.onerror = reject
-      reader.readAsText(file)
-    })
   }
 
   const handlePreview = async (source: Source) => {
