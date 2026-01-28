@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Upload, FileText, X, Eye } from 'lucide-react'
 
 interface Source {
@@ -6,11 +6,28 @@ interface Source {
   name: string
   size: number
   type: string
-  uploadedAt: Date
+  uploadedAt: string
 }
 
 export default function SourceManager() {
   const [sources, setSources] = useState<Source[]>([])
+  const [previewFile, setPreviewFile] = useState<Source | null>(null)
+
+  // Load sources from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('source-files')
+    if (stored) {
+      try {
+        setSources(JSON.parse(stored))
+      } catch (e) {
+        console.log('Failed to parse stored source files')
+      }
+    }
+  }, [])
+
+  const saveSourcesLocally = (newSources: Source[]) => {
+    localStorage.setItem('source-files', JSON.stringify(newSources))
+  }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -19,14 +36,18 @@ export default function SourceManager() {
         name: file.name,
         size: file.size,
         type: file.type,
-        uploadedAt: new Date(),
+        uploadedAt: new Date().toISOString(),
       }))
-      setSources([...sources, ...newSources])
+      const updated = [...sources, ...newSources]
+      setSources(updated)
+      saveSourcesLocally(updated)
     }
   }
 
   const removeSource = (id: string) => {
-    setSources(sources.filter(s => s.id !== id))
+    const updated = sources.filter(s => s.id !== id)
+    setSources(updated)
+    saveSourcesLocally(updated)
   }
 
   return (
@@ -72,12 +93,16 @@ export default function SourceManager() {
                   <h4 className="font-medium truncate">{source.name}</h4>
                   <p className="text-sm text-gray-400">
                     {(source.size / 1024).toFixed(0)} KB · 
-                    Uploaded {source.uploadedAt.toLocaleDateString()}
+                    Uploaded {new Date(source.uploadedAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="p-2 hover:bg-gray-600 rounded">
-                    <Eye className="w-5 h-5 text-gray-400" />
+                  <button
+                    onClick={() => setPreviewFile(source)}
+                    className="p-2 hover:bg-gray-600 rounded"
+                    title="Preview file"
+                  >
+                    <Eye className="w-5 h-5 text-gray-400 hover:text-gray-300" />
                   </button>
                   <button
                     onClick={() => removeSource(source.id)}
@@ -107,6 +132,35 @@ export default function SourceManager() {
           </div>
         )}
       </div>
+
+      {/* File Preview Modal */}
+      {previewFile && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg border border-gray-700 max-w-2xl w-full max-h-96 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h3 className="font-semibold flex items-center space-x-2">
+                <FileText className="w-5 h-5" />
+                <span>{previewFile.name}</span>
+              </h3>
+              <button
+                onClick={() => setPreviewFile(null)}
+                className="p-1 hover:bg-gray-700 rounded"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-4">
+              <div className="text-gray-400">
+                <p className="mb-2">File size: {(previewFile.size / 1024).toFixed(0)} KB</p>
+                <p className="mb-4 text-sm">Uploaded: {new Date(previewFile.uploadedAt).toLocaleString()}</p>
+                <p className="text-sm p-3 bg-gray-700 rounded border border-gray-600">
+                  Preview functionality for {previewFile.type || 'file'} files will be implemented in the next phase.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

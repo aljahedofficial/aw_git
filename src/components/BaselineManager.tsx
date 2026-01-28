@@ -1,15 +1,55 @@
-import { useState } from 'react'
-import { Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Upload, FileText, CheckCircle, AlertCircle, Eye, X } from 'lucide-react'
+
+interface StoredFile {
+  id: string
+  name: string
+  size: number
+  type: string
+  uploadedAt: string
+}
 
 export default function BaselineManager() {
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<StoredFile[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [baseline, setBaseline] = useState<any>(null)
+  const [previewFile, setPreviewFile] = useState<StoredFile | null>(null)
+
+  // Load files from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('baseline-files')
+    if (stored) {
+      try {
+        setFiles(JSON.parse(stored))
+      } catch (e) {
+        console.log('Failed to parse stored baseline files')
+      }
+    }
+  }, [])
+
+  const saveFilesToStorage = (newFiles: StoredFile[]) => {
+    localStorage.setItem('baseline-files', JSON.stringify(newFiles))
+  }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFiles(Array.from(e.target.files))
+      const newFiles: StoredFile[] = Array.from(e.target.files).map((file) => ({
+        id: Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadedAt: new Date().toISOString(),
+      }))
+      const updatedFiles = [...files, ...newFiles]
+      setFiles(updatedFiles)
+      saveFilesToStorage(updatedFiles)
     }
+  }
+
+  const removeFile = (id: string) => {
+    const updatedFiles = files.filter(f => f.id !== id)
+    setFiles(updatedFiles)
+    saveFilesToStorage(updatedFiles)
   }
 
   const processBaseline = async () => {
@@ -63,14 +103,28 @@ export default function BaselineManager() {
             {/* Uploaded Files */}
             {files.length > 0 && (
               <div className="space-y-2">
-                <h3 className="font-medium">Uploaded Files:</h3>
-                {files.map((file, index) => (
-                  <div key={index} className="flex items-center space-x-2 bg-gray-700 rounded p-3">
-                    <FileText className="w-5 h-5 text-blue-400" />
-                    <span className="flex-1">{file.name}</span>
-                    <span className="text-sm text-gray-400">
-                      {(file.size / 1024).toFixed(0)} KB
-                    </span>
+                <h3 className="font-medium">Uploaded Files ({files.length}):</h3>
+                {files.map((file) => (
+                  <div key={file.id} className="flex items-center space-x-3 bg-gray-700 rounded p-3">
+                    <FileText className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{file.name}</p>
+                      <p className="text-xs text-gray-400">{(file.size / 1024).toFixed(0)} KB</p>
+                    </div>
+                    <button
+                      onClick={() => setPreviewFile(file)}
+                      className="p-1 hover:bg-gray-600 rounded"
+                      title="Preview file"
+                    >
+                      <Eye className="w-5 h-5 text-gray-400 hover:text-gray-300" />
+                    </button>
+                    <button
+                      onClick={() => removeFile(file.id)}
+                      className="p-1 hover:bg-gray-600 rounded"
+                      title="Remove file"
+                    >
+                      <X className="w-5 h-5 text-gray-400 hover:text-red-400" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -156,6 +210,33 @@ export default function BaselineManager() {
           </div>
         </div>
       </div>
-    </div>
+      {/* File Preview Modal */}
+      {previewFile && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg border border-gray-700 max-w-2xl w-full max-h-96 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h3 className="font-semibold flex items-center space-x-2">
+                <FileText className="w-5 h-5" />
+                <span>{previewFile.name}</span>
+              </h3>
+              <button
+                onClick={() => setPreviewFile(null)}
+                className="p-1 hover:bg-gray-700 rounded"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-4">
+              <div className="text-gray-400">
+                <p className="mb-2">File size: {(previewFile.size / 1024).toFixed(0)} KB</p>
+                <p className="mb-4 text-sm">Uploaded: {new Date(previewFile.uploadedAt).toLocaleString()}</p>
+                <p className="text-sm p-3 bg-gray-700 rounded border border-gray-600">
+                  Preview functionality for {previewFile.type || 'file'} files will be implemented in the next phase.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}    </div>
   )
 }
