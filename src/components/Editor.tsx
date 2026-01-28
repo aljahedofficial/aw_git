@@ -4,17 +4,18 @@ import Placeholder from '@tiptap/extension-placeholder'
 import CharacterCount from '@tiptap/extension-character-count'
 import { useEffect, useState } from 'react'
 import { analyzeLinguisticFeatures, calculateSimilarityWithSource } from '../utils/linguisticAnalysis'
-import BurstinessEKG from './BurstinessEKG'
+import PlagiarismPanel from './PlagiarismPanel'
 
 interface EditorProps {
   onMetricsUpdate: (metrics: any) => void
 }
 
 export default function Editor({ onMetricsUpdate }: EditorProps) {
-  const [keystrokeData, setKeystrokeData] = useState<number[]>([])
+  const [_keystrokeData, setKeystrokeData] = useState<number[]>([])
   const [lastKeystrokeTime, setLastKeystrokeTime] = useState<number>(Date.now())
   const [stumbles, setStumbles] = useState<Array<{ time: number; duration: number }>>([])
   const [sourceTexts, setSourceTexts] = useState<string[]>([])
+  const [currentWarnings, setCurrentWarnings] = useState<string[]>([])
 
   const editor = useEditor({
     extensions: [
@@ -64,6 +65,7 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
 
         // Merge warnings
         const allWarnings = [...(analysis.warnings || []), ...similarityWarnings]
+        setCurrentWarnings(allWarnings)
 
         onMetricsUpdate({
           ...analysis,
@@ -194,10 +196,8 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
         <EditorContent editor={editor} />
       </div>
 
-      {/* Burstiness EKG */}
-      {keystrokeData.length > 10 && (
-        <BurstinessEKG data={keystrokeData} stumbles={stumbles} />
-      )}
+      {/* Plagiarism & Similarity Detection */}
+      <PlagiarismPanel warnings={currentWarnings} />
 
       {/* Stumble Alerts */}
       {stumbles.length > 0 && (
