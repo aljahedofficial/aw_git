@@ -7,6 +7,7 @@ import { analyzeLinguisticFeatures, calculateSimilarityWithSource } from '../uti
 import { findMatchedWords } from '../utils/suggestions'
 import PlagiarismPanel from './PlagiarismPanel'
 import EditorSuggestions from './EditorSuggestions'
+import SyntacticBurstiness from './SyntacticBurstiness'
 
 interface EditorProps {
   onMetricsUpdate: (metrics: any) => void
@@ -237,6 +238,9 @@ export default function Editor({ onMetricsUpdate, onTextChange }: EditorProps) {
           </p>
         </div>
       )}
+
+      {/* Syntactic Burstiness Analysis */}
+      <SyntacticBurstiness text={editor?.getText() || ''} />
     </div>
   )
 }
