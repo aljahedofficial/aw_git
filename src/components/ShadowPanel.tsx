@@ -7,17 +7,31 @@ interface ShadowPanelProps {
 }
 
 export default function ShadowPanel({ scores }: ShadowPanelProps) {
-  const getRiskLevel = (score: number) => {
-    if (score < 0.3) return { level: 'Low', color: 'green', text: 'Safe' }
-    if (score < 0.6) return { level: 'Medium', color: 'yellow', text: 'Caution' }
-    return { level: 'High', color: 'red', text: 'Risk' }
+  const getRiskColor = (score: number): string => {
+    if (score < 0.3) return 'var(--color-success)'
+    if (score < 0.6) return 'var(--color-warning)'
+    return 'var(--color-danger)'
+  }
+
+  const getRiskText = (score: number): string => {
+    if (score < 0.3) return 'Safe'
+    if (score < 0.6) return 'Caution'
+    return 'Risk'
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
+    <div
+      className="rounded-lg border p-6"
+      style={{
+        backgroundColor: 'var(--color-bg-secondary)',
+        borderColor: 'var(--color-border)'
+      }}
+    >
       <div className="mb-4">
-        <h2 className="text-xl font-bold mb-1">Shadow System</h2>
-        <p className="text-sm text-gray-400">
+        <h2 className="text-xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>
+          Shadow System
+        </h2>
+        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
           Real-time AI detection risk estimates
         </p>
       </div>
@@ -26,18 +40,26 @@ export default function ShadowPanel({ scores }: ShadowPanelProps) {
         {/* GPTZero */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">GPTZero</span>
-            <span className={`text-sm font-bold text-${getRiskLevel(scores.gptZero).color}-400`}>
-              {getRiskLevel(scores.gptZero).text}
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+              GPTZero
+            </span>
+            <span className="text-sm font-bold" style={{ color: getRiskColor(scores.gptZero) }}>
+              {getRiskText(scores.gptZero)}
             </span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div
+            className="w-full rounded-full h-2"
+            style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
+          >
             <div
-              className={`bg-${getRiskLevel(scores.gptZero).color}-500 h-2 rounded-full transition-all duration-300`}
-              style={{ width: `${scores.gptZero * 100}%` }}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{ 
+                width: `${scores.gptZero * 100}%`,
+                backgroundColor: getRiskColor(scores.gptZero)
+              }}
             />
           </div>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Risk: {(scores.gptZero * 100).toFixed(0)}%
           </p>
         </div>
@@ -45,18 +67,26 @@ export default function ShadowPanel({ scores }: ShadowPanelProps) {
         {/* Turnitin */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Turnitin</span>
-            <span className={`text-sm font-bold text-${getRiskLevel(scores.turnitin).color}-400`}>
-              {getRiskLevel(scores.turnitin).text}
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+              Turnitin
+            </span>
+            <span className="text-sm font-bold" style={{ color: getRiskColor(scores.turnitin) }}>
+              {getRiskText(scores.turnitin)}
             </span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div
+            className="w-full rounded-full h-2"
+            style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
+          >
             <div
-              className={`bg-${getRiskLevel(scores.turnitin).color}-500 h-2 rounded-full transition-all duration-300`}
-              style={{ width: `${scores.turnitin * 100}%` }}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{ 
+                width: `${scores.turnitin * 100}%`,
+                backgroundColor: getRiskColor(scores.turnitin)
+              }}
             />
           </div>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Risk: {(scores.turnitin * 100).toFixed(0)}%
           </p>
         </div>
@@ -64,29 +94,42 @@ export default function ShadowPanel({ scores }: ShadowPanelProps) {
         {/* Originality.ai */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Originality.ai</span>
-            <span className={`text-sm font-bold text-${getRiskLevel(scores.originality).color}-400`}>
-              {getRiskLevel(scores.originality).text}
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+              Originality.ai
+            </span>
+            <span className="text-sm font-bold" style={{ color: getRiskColor(scores.originality) }}>
+              {getRiskText(scores.originality)}
             </span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div
+            className="w-full rounded-full h-2"
+            style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
+          >
             <div
-              className={`bg-${getRiskLevel(scores.originality).color}-500 h-2 rounded-full transition-all duration-300`}
-              style={{ width: `${scores.originality * 100}%` }}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{ 
+                width: `${scores.originality * 100}%`,
+                backgroundColor: getRiskColor(scores.originality)
+              }}
             />
           </div>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Risk: {(scores.originality * 100).toFixed(0)}%
           </p>
         </div>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-gray-700">
-        <div className="bg-gray-700/50 rounded-lg p-3">
-          <p className="text-xs text-gray-300 mb-2">
+      <div className="mt-6 pt-6" style={{ borderTop: '1px solid var(--color-border)' }}>
+        <div
+          className="rounded-lg p-3"
+          style={{
+            backgroundColor: 'var(--color-bg-tertiary)'
+          }}
+        >
+          <p className="text-xs mb-2" style={{ color: 'var(--color-text)' }}>
             <strong>Shadow Accuracy:</strong> 93% vs. real detectors
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             These scores simulate how AI detectors would evaluate your writing. 
             Use them as guidance, not absolute truth.
           </p>

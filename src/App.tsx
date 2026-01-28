@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Editor from './components/Editor'
 import MetricsPanel from './components/MetricsPanel'
 import BaselineManager from './components/BaselineManager'
@@ -6,7 +6,9 @@ import ShadowPanel from './components/ShadowPanel'
 import SourceManager from './components/SourceManager'
 import OnboardingTutorial from './components/OnboardingTutorial'
 import ResearcherDashboard from './components/ResearcherDashboard'
+import ThemeSelector from './components/ThemeSelector'
 import { FileText, Activity, Target, FileUp, BarChart2 } from 'lucide-react'
+import { getStoredTheme, applyTheme, themes } from './utils/themes'
 
 function App() {
   const [activeTab, setActiveTab] = useState<'editor' | 'baseline' | 'sources' | 'dashboard'>('editor')
@@ -21,67 +23,87 @@ function App() {
     }
   })
 
+  // Apply theme on mount
+  useEffect(() => {
+    const theme = getStoredTheme()
+    applyTheme(themes[theme])
+  }, [])
+
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: 'var(--color-bg)',
+      color: 'var(--color-text)',
+      transition: 'background-color 0.3s ease, color 0.3s ease'
+    }}>
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
+      <header style={{
+        backgroundColor: 'var(--color-bg-secondary)',
+        borderBottom: '1px solid var(--color-border)'
+      }}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Target className="w-8 h-8 text-primary-500" />
+              <Target className="w-8 h-8" style={{ color: 'var(--color-primary)' }} />
               <h1 className="text-2xl font-bold">Writing Defense Platform</h1>
             </div>
-            <div className="text-sm text-gray-400">
-              v1.0.0-beta
+            <div className="flex items-center space-x-4">
+              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                v1.0.0-beta
+              </div>
+              <ThemeSelector />
             </div>
           </div>
         </div>
       </header>
 
       {/* Navigation */}
-      <nav className="bg-gray-800 border-b border-gray-700">
+      <nav style={{
+        backgroundColor: 'var(--color-bg-secondary)',
+        borderBottom: '1px solid var(--color-border)'
+      }}>
         <div className="container mx-auto px-4">
           <div className="flex space-x-1">
             <button
               onClick={() => setActiveTab('editor')}
-              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors ${
-                activeTab === 'editor'
-                  ? 'border-primary-500 text-primary-400'
-                  : 'border-transparent text-gray-400 hover:text-gray-300'
-              }`}
+              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors font-medium`}
+              style={{
+                borderColor: activeTab === 'editor' ? 'var(--color-primary)' : 'transparent',
+                color: activeTab === 'editor' ? 'var(--color-primary)' : 'var(--color-text-secondary)'
+              }}
             >
               <FileText className="w-4 h-4" />
               <span>Editor</span>
             </button>
             <button
               onClick={() => setActiveTab('baseline')}
-              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors ${
-                activeTab === 'baseline'
-                  ? 'border-primary-500 text-primary-400'
-                  : 'border-transparent text-gray-400 hover:text-gray-300'
-              }`}
+              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors font-medium`}
+              style={{
+                borderColor: activeTab === 'baseline' ? 'var(--color-primary)' : 'transparent',
+                color: activeTab === 'baseline' ? 'var(--color-primary)' : 'var(--color-text-secondary)'
+              }}
             >
               <Activity className="w-4 h-4" />
               <span>Baseline</span>
             </button>
             <button
               onClick={() => setActiveTab('sources')}
-              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors ${
-                activeTab === 'sources'
-                  ? 'border-primary-500 text-primary-400'
-                  : 'border-transparent text-gray-400 hover:text-gray-300'
-              }`}
+              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors font-medium`}
+              style={{
+                borderColor: activeTab === 'sources' ? 'var(--color-primary)' : 'transparent',
+                color: activeTab === 'sources' ? 'var(--color-primary)' : 'var(--color-text-secondary)'
+              }}
             >
               <FileUp className="w-4 h-4" />
               <span>Sources</span>
             </button>
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors ${
-                activeTab === 'dashboard'
-                  ? 'border-primary-500 text-primary-400'
-                  : 'border-transparent text-gray-400 hover:text-gray-300'
-              }`}
+              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors font-medium`}
+              style={{
+                borderColor: activeTab === 'dashboard' ? 'var(--color-primary)' : 'transparent',
+                color: activeTab === 'dashboard' ? 'var(--color-primary)' : 'var(--color-text-secondary)'
+              }}
             >
               <BarChart2 className="w-4 h-4" />
               <span>Dashboard</span>
@@ -112,9 +134,13 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 border-t border-gray-700 mt-12">
+      <footer style={{
+        backgroundColor: 'var(--color-bg-secondary)',
+        borderTop: '1px solid var(--color-border)',
+        marginTop: '3rem'
+      }}>
         <div className="container mx-auto px-4 py-6">
-          <div className="text-center text-sm text-gray-400">
+          <div className="text-center text-sm" style={{ color: 'var(--color-text-secondary)' }}>
             <p>Writing Defense Platform - Research Tool for L2 Writers</p>
             <p className="mt-2">All data is processed locally and encrypted</p>
           </div>

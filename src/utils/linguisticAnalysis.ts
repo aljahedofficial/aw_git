@@ -17,9 +17,14 @@ export interface LinguisticAnalysis {
     adverbs: number
   }
   syntacticComplexity?: number
+  aiPatternScore?: number
+  similarityRisk?: number
+  warnings?: string[]
 }
 
 export function analyzeLinguisticFeatures(text: string): LinguisticAnalysis {
+  const warnings: string[] = []
+  
   // Use Compromise.js for NLP analysis
   const doc = nlp(text)
   
@@ -31,7 +36,9 @@ export function analyzeLinguisticFeatures(text: string): LinguisticAnalysis {
       humanityScore: 50,
       burstiness: 0,
       confidence: 0.3,
-      shadowScores: { gptZero: 0.5, turnitin: 0.5, originality: 0.5 }
+      shadowScores: { gptZero: 0.5, turnitin: 0.5, originality: 0.5 },
+      aiPatternScore: 0.5,
+      warnings: []
     }
   }
 
@@ -67,31 +74,87 @@ export function analyzeLinguisticFeatures(text: string): LinguisticAnalysis {
   const clauses = doc.match('#Conjunction').length
   const syntacticComplexity = clauses / sentences.length
 
-  // Count glue words (function words that are overused in AI text)
-  const glueWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by']
+  // ==================== ENHANCED AI PATTERN DETECTION ====================
+  
+  // 1. Common AI transition phrases (overused by LLMs)
+  const aiTransitions = ['furthermore', 'moreover', 'in conclusion', 'ultimately', 'significantly', 
+    'substantially', 'considerably', 'particularly', 'specifically', 'notably', 'evidently', 
+    'consequently', 'therefore', 'thus', 'hence', 'accordingly', 'admittedly', 'arguably',
+    'undoubtedly', 'certainly', 'obviously', 'clearly']
+  const aiTransitionCount = aiTransitions.filter(phrase => 
+    text.toLowerCase().includes(phrase)
+  ).length
+  
+  // 2. Passive voice detection (AI uses more passive voice)
+  const passiveVoiceMatches = text.match(/was\s+\w+ed|were\s+\w+ed|is\s+\w+ed|are\s+\w+ed|been\s+\w+ed|be\s+\w+ed/gi) || []
+  const passiveRatio = passiveVoiceMatches.length / sentences.length
+  
+  // 3. Formal vocabulary density (AI heavy on formal words)
+  const formalWords = ['accordingly', 'approximately', 'ascertain', 'demonstrate', 'elucidate',
+    'facilitate', 'implement', 'indicate', 'inherent', 'integrate', 'notwithstanding', 
+    'pertaining', 'prevalent', 'procurement', 'utilize', 'facilitate', 'endeavor', 'paradigm']
+  const formalWordCount = words.filter((w: string) => 
+    formalWords.includes(w.toLowerCase())
+  ).length
+  const formalWordRatio = formalWordCount / words.length
+
+  // 4. Glue words and function word density (AI-characteristic)
+  const glueWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'be']
   const glueWordCount = words.filter((w: string) => glueWords.includes(w.toLowerCase())).length
   const glueWordRatio = glueWordCount / words.length
 
+  // 5. Sentence length variance (AI tends to have similar sentence lengths)
+  const lengthVariance = variance
+  
+  // 6. Repetitive sentence starters (AI repeats structural patterns)
+  const sentenceStarters = sentences.map((s: string) => s.trim().split(/\s+/)[0].toLowerCase())
+  const starterFrequency = sentenceStarters.filter((s: string, i: number) => sentenceStarters.indexOf(s) !== i).length
+  
+  // 7. Punctuation patterns (humans vary more) - calculated but not used to reduce noise
+
+  // AI Pattern Score (0 = human-like, 1 = AI-like)
+  const aiScores = {
+    transitionPhrases: Math.min(aiTransitionCount / 2, 1) * 0.2, // AI overuses transitions
+    passiveVoice: Math.min(passiveRatio / 0.25, 1) * 0.15, // AI uses ~25%+ passive
+    formalVocab: Math.min(formalWordRatio / 0.08, 1) * 0.15, // AI uses formal words more
+    glueWordRatio: Math.max(0, (glueWordRatio - 0.35) * 1.5) * 0.15, // AI: >35% glue words
+    lowVariance: Math.max(0, (10 - lengthVariance) / 10) * 0.2, // Low variance = AI
+    repetitiveStarters: Math.min(starterFrequency / 5, 1) * 0.15 // Repetitive structure
+  }
+  
+  const aiPatternScore = Math.round((Object.values(aiScores).reduce((a, b) => a + b, 0)) * 100) / 100
+
+  // Generate warnings
+  if (aiPatternScore > 0.65) {
+    warnings.push('⚠️ High AI pattern detected: Check writing for formal transitions')
+  }
+  if (passiveRatio > 0.25) {
+    warnings.push('⚠️ High passive voice usage - AI characteristic')
+  }
+  if (glueWordRatio > 0.45) {
+    warnings.push('⚠️ Excessive function words - common in AI text')
+  }
+  if (lengthVariance < 2) {
+    warnings.push('⚠️ Low sentence length variation - indicates repetitive patterns')
+  }
+
   // Humanity Score calculation
-  // Higher lexical diversity = more human
-  // Higher burstiness = more human
-  // Lower glue word ratio = more human
-  // Balanced POS distribution = more human
   const diversityScore = Math.min(lexicalDiversity * 100, 100)
   const burstinessScore = Math.min((burstiness / 10) * 100, 100)
   const glueScore = Math.max(100 - (glueWordRatio * 300), 0)
   
-  // POS balance score (penalize if too verb-heavy or noun-heavy)
+  // POS balance score
   const posBalance = 100 - Math.abs(posDistribution.nouns - 0.25) * 200 - Math.abs(posDistribution.verbs - 0.20) * 200
   
-  const humanityScore = (diversityScore * 0.3 + burstinessScore * 0.3 + glueScore * 0.2 + posBalance * 0.2)
+  // Factor in AI pattern score (lower AI score = higher humanity score)
+  const aiInfluence = (1 - aiPatternScore) * 100
+  const humanityScore = (diversityScore * 0.25 + burstinessScore * 0.25 + glueScore * 0.2 + posBalance * 0.15 + aiInfluence * 0.15)
 
-  // Shadow scores (inverse of humanity indicators)
-  // These are simplified heuristics - real detectors use complex ML models
-  const predictability = 1 - (lexicalDiversity * 0.5 + (burstiness / 10) * 0.5)
-  const gptZero = Math.max(0.1, Math.min(0.9, predictability + (glueWordRatio - 0.3)))
-  const turnitin = Math.max(0.1, Math.min(0.9, predictability * 1.1))
-  const originality = Math.max(0.1, Math.min(0.9, predictability * 0.9))
+  // Enhanced Shadow scores using AI pattern detection
+  const predictability = 1 - (lexicalDiversity * 0.4 + (burstiness / 10) * 0.4) + aiPatternScore * 0.2
+  const gptZero = Math.max(0.1, Math.min(0.95, predictability * 0.8 + aiPatternScore * 0.5))
+  const turnitin = Math.max(0.1, Math.min(0.95, (predictability * 0.7 + aiPatternScore * 0.4)))
+  const originality = Math.max(0.1, Math.min(0.95, (predictability * 0.6 + aiPatternScore * 0.3)))
 
   // Confidence based on text length
   const confidence = Math.min(words.length / 500, 1) * 0.87
@@ -106,7 +169,9 @@ export function analyzeLinguisticFeatures(text: string): LinguisticAnalysis {
       originality: parseFloat(originality.toFixed(2))
     },
     posDistribution,
-    syntacticComplexity
+    syntacticComplexity,
+    aiPatternScore: parseFloat(aiPatternScore.toFixed(2)),
+    warnings
   }
 }
 
@@ -117,6 +182,131 @@ export function calculateBurstiness(intervals: number[]): number {
   const variance = intervals.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / intervals.length
   
   return Math.sqrt(variance)
+}
+
+// ==================== SIMILARITY DETECTION ====================
+
+/**
+ * Calculate semantic similarity between user text and source material
+ * Uses n-gram matching and phrase overlap detection
+ */
+export function calculateSimilarityWithSource(userText: string, sourceText: string): {
+  overallSimilarity: number
+  phraseMatches: number
+  ngramOverlap: number
+  warnings: string[]
+} {
+  const warnings: string[] = []
+  
+  if (!sourceText || sourceText.length < 50) {
+    return { overallSimilarity: 0, phraseMatches: 0, ngramOverlap: 0, warnings: [] }
+  }
+
+  // Normalize text
+  const normalize = (text: string) => text.toLowerCase().trim()
+  const userNorm = normalize(userText)
+  const sourceNorm = normalize(sourceText)
+
+  // 1. Phrase-level matching (sequences of 4+ words)
+  const userPhrases = extractPhrases(userNorm, 4)
+  const sourcePhrases = extractPhrases(sourceNorm, 4)
+  const matchedPhrases = userPhrases.filter(p => sourcePhrases.some(sp => sp.includes(p) || p.includes(sp)))
+  const phraseMatchRatio = matchedPhrases.length / Math.max(userPhrases.length, 1)
+
+  // 2. N-gram overlap (3-word sequences)
+  const userNgrams = getNgrams(userNorm, 3)
+  const sourceNgrams = getNgrams(sourceNorm, 3)
+  const commonNgrams = userNgrams.filter(ng => sourceNgrams.includes(ng))
+  const ngramRatio = commonNgrams.length / Math.max(userNgrams.length, 1)
+
+  // 3. Sentence structure similarity (paraphrase detection)
+  const userSentences = userNorm.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10)
+  const sourceSentences = sourceNorm.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10)
+  
+  let structureSimilarity = 0
+  userSentences.forEach(us => {
+    sourceSentences.forEach(ss => {
+      const similarity = calculateStringSimilarity(us, ss)
+      if (similarity > 0.6) {
+        structureSimilarity += similarity / sourceSentences.length
+      }
+    })
+  })
+  structureSimilarity = structureSimilarity / Math.max(userSentences.length, 1)
+
+  // Overall similarity (weighted)
+  const overallSimilarity = Math.round((phraseMatchRatio * 0.35 + ngramRatio * 0.35 + structureSimilarity * 0.3) * 100) / 100
+
+  // Generate warnings
+  if (overallSimilarity > 0.5) {
+    warnings.push(`⚠️ High similarity to source material (${(overallSimilarity * 100).toFixed(0)}%)`)
+  }
+  if (phraseMatchRatio > 0.4) {
+    warnings.push(`⚠️ Multiple phrases match source (${matchedPhrases.length} phrases)`)
+  }
+  if (ngramRatio > 0.3) {
+    warnings.push(`⚠️ Sentence structure too similar to source`)
+  }
+
+  return {
+    overallSimilarity,
+    phraseMatches: matchedPhrases.length,
+    ngramOverlap: commonNgrams.length,
+    warnings
+  }
+}
+
+// Helper: Extract phrases of n words
+function extractPhrases(text: string, phraseLength: number): string[] {
+  const words = text.split(/\s+/)
+  const phrases: string[] = []
+  for (let i = 0; i <= words.length - phraseLength; i++) {
+    phrases.push(words.slice(i, i + phraseLength).join(' '))
+  }
+  return phrases
+}
+
+// Helper: Get n-grams
+function getNgrams(text: string, n: number): string[] {
+  const words = text.split(/\s+/)
+  const ngrams: string[] = []
+  for (let i = 0; i <= words.length - n; i++) {
+    ngrams.push(words.slice(i, i + n).join(' '))
+  }
+  return ngrams
+}
+
+// Helper: Levenshtein-based string similarity
+function calculateStringSimilarity(str1: string, str2: string): number {
+  const longer = str1.length > str2.length ? str1 : str2
+  const shorter = str1.length > str2.length ? str2 : str1
+  
+  if (longer.length === 0) return 1.0
+  
+  const editDistance = getEditDistance(longer, shorter)
+  return (longer.length - editDistance) / longer.length
+}
+
+// Helper: Calculate edit distance
+function getEditDistance(str1: string, str2: string): number {
+  const costs = []
+  for (let i = 0; i <= str1.length; i++) {
+    let lastValue = i
+    for (let j = 0; j <= str2.length; j++) {
+      if (i === 0) {
+        costs[j] = j
+      } else if (j > 0) {
+        let newValue = costs[j - 1]
+        if (str1.charAt(i - 1) !== str2.charAt(j - 1)) {
+          newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1
+        }
+        costs[j - 1] = lastValue
+        lastValue = newValue
+      }
+    }
+    if (i > 0) costs[str2.length] = lastValue
+  }
+  return costs[str2.length]
 }
 
 export function detectCopyPaste(text: string, previousText: string, timeDelta: number): boolean {

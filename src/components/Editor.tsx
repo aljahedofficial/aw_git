@@ -3,7 +3,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import CharacterCount from '@tiptap/extension-character-count'
 import { useEffect, useState } from 'react'
-import { analyzeLinguisticFeatures } from '../utils/linguisticAnalysis'
+import { analyzeLinguisticFeatures, calculateSimilarityWithSource } from '../utils/linguisticAnalysis'
 import BurstinessEKG from './BurstinessEKG'
 
 interface EditorProps {
@@ -14,6 +14,7 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
   const [keystrokeData, setKeystrokeData] = useState<number[]>([])
   const [lastKeystrokeTime, setLastKeystrokeTime] = useState<number>(Date.now())
   const [stumbles, setStumbles] = useState<Array<{ time: number; duration: number }>>([])
+  const [sourceTexts, setSourceTexts] = useState<string[]>([])
 
   const editor = useEditor({
     extensions: [
@@ -26,7 +27,7 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
     content: '',
     editorProps: {
       attributes: {
-        class: 'prose prose-invert max-w-none focus:outline-none min-h-[400px] p-6',
+        class: 'prose max-w-none focus:outline-none min-h-[400px] p-6'
       },
       handleKeyDown: (_view, _event) => {
         const now = Date.now()
@@ -48,10 +49,44 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
       const text = editor.getText()
       if (text.length > 10) {
         const analysis = analyzeLinguisticFeatures(text)
-        onMetricsUpdate(analysis)
+        
+        // Calculate similarity with sources
+        let maxSimilarity = 0
+        let similarityWarnings: string[] = []
+        
+        sourceTexts.forEach(source => {
+          const similarity = calculateSimilarityWithSource(text, source)
+          if (similarity.overallSimilarity > maxSimilarity) {
+            maxSimilarity = similarity.overallSimilarity
+          }
+          similarityWarnings.push(...similarity.warnings)
+        })
+
+        // Merge warnings
+        const allWarnings = [...(analysis.warnings || []), ...similarityWarnings]
+
+        onMetricsUpdate({
+          ...analysis,
+          similarityRisk: maxSimilarity,
+          warnings: allWarnings
+        })
       }
     },
   })
+
+  // Load source texts from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('source-files')
+      if (saved) {
+        const files = JSON.parse(saved)
+        const texts = files.map((f: any) => f.content || f.text || '').filter(Boolean)
+        setSourceTexts(texts)
+      }
+    } catch (e) {
+      console.error('Error loading source texts:', e)
+    }
+  }, [])
 
   useEffect(() => {
     // Auto-save to IndexedDB every 30 seconds
@@ -96,9 +131,21 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-        <div className="bg-gray-750 px-4 py-2 border-b border-gray-700 flex items-center justify-between">
-          <div className="text-sm text-gray-400">
+      <div
+        className="rounded-lg border overflow-hidden"
+        style={{
+          backgroundColor: 'var(--color-bg-secondary)',
+          borderColor: 'var(--color-border)'
+        }}
+      >
+        <div
+          className="px-4 py-2 border-b flex items-center justify-between"
+          style={{
+            backgroundColor: 'var(--color-bg-tertiary)',
+            borderColor: 'var(--color-border)'
+          }}
+        >
+          <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
             <span className="font-medium">{wordCount}</span> words · 
             <span className="font-medium ml-2">{charCount}</span> characters
           </div>
@@ -106,14 +153,24 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
             <button
               onClick={() => editor.chain().focus().undo().run()}
               disabled={!editor.can().undo()}
-              className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              style={{
+                backgroundColor: 'var(--color-bg-secondary)',
+                color: 'var(--color-text)',
+                border: '1px solid var(--color-border)'
+              }}
             >
               Undo
             </button>
             <button
               onClick={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().redo()}
-              className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              style={{
+                backgroundColor: 'var(--color-bg-secondary)',
+                color: 'var(--color-text)',
+                border: '1px solid var(--color-border)'
+              }}
             >
               Redo
             </button>
@@ -129,9 +186,16 @@ export default function Editor({ onMetricsUpdate }: EditorProps) {
 
       {/* Stumble Alerts */}
       {stumbles.length > 0 && (
-        <div className="bg-yellow-900/20 border border-yellow-800/50 rounded-lg p-4">
-          <h3 className="text-yellow-400 font-medium mb-2">⚠️ Stumble Detected</h3>
-          <p className="text-sm text-gray-300">
+        <div
+          className="rounded-lg p-4 border"
+          style={{
+            backgroundColor: `var(--color-warning)`,
+            borderColor: `var(--color-border)`,
+            opacity: 0.15
+          }}
+        >
+          <h3 className="font-medium mb-2" style={{ color: 'var(--color-text)' }}>⚠️ Stumble Detected</h3>
+          <p className="text-sm" style={{ color: 'var(--color-text)' }}>
             You paused for {(stumbles[stumbles.length - 1].duration / 1000).toFixed(1)}s. 
             This might indicate cognitive effort or searching for words.
           </p>
