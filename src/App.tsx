@@ -6,7 +6,7 @@ import ShadowPanel from './components/ShadowPanel'
 import SourceManager from './components/SourceManager'
 import OnboardingTutorial from './components/OnboardingTutorial'
 import ResearcherDashboard from './components/ResearcherDashboard'
-import SentenceLengthGraph from './components/SentenceLengthGraph'
+import AdvancedBurstinessDetector from './components/AdvancedBurstinessDetector'
 import SentenceLengthDistribution from './components/SentenceLengthDistribution'
 import ThemeSelector from './components/ThemeSelector'
 import { FileText, Activity, Target, FileUp, BarChart2 } from 'lucide-react'
@@ -130,7 +130,7 @@ function App() {
             </div>
             <div className="space-y-6">
               <MetricsPanel metrics={metrics} />
-              <SentenceLengthGraph burstiness={metrics.burstiness} />
+              <AdvancedBurstinessDetector text={editorText} />
               <SentenceLengthDistribution text={editorText} />
               <ShadowPanel scores={metrics.shadowScores} />
             </div>
