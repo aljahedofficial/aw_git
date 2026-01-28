@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="#0ea5e9" opacity="0.1"/>
+  
+  <!-- Shield Shape (Defense) -->
+  <path d="M 100 30 L 140 50 L 140 100 Q 140 150 100 170 Q 60 150 60 100 L 60 50 Z" 
+        fill="#0ea5e9" opacity="0.2" stroke="#0ea5e9" stroke-width="2"/>
+  
+  <!-- Pen/Writing Symbol -->
+  <g transform="translate(80, 70)">
+    <!-- Pen body -->
+    <rect x="10" y="0" width="8" height="40" fill="#0369a1" rx="2"/>
+    <!-- Pen tip -->
+    <polygon points="10,40 18,40 14,50" fill="#075985"/>
+    <!-- Pen cap -->
+    <rect x="10" y="-5" width="8" height="5" fill="#0284c7" rx="1"/>
+  </g>
+  
+  <!-- EKG/Heartbeat Line (Burstiness) -->
+  <g transform="translate(50, 120)">
+    <path d="M 0 0 L 15 0 L 20 -15 L 25 20 L 30 0 L 45 0 L 50 -10 L 55 10 L 60 0 L 80 0" 
+          fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+    <!-- Pulse dots -->
+    <circle cx="20" cy="-15" r="3" fill="#38bdf8"/>
+    <circle cx="25" cy="20" r="3" fill="#38bdf8"/>
+    <circle cx="50" cy="-10" r="3" fill="#38bdf8"/>
+    <circle cx="55" cy="10" r="3" fill="#38bdf8"/>
+  </g>
+  
+  <!-- Eye Symbol (Shadow/Watching) -->
+  <g transform="translate(120, 80)">
+    <ellipse cx="15" cy="0" rx="15" ry="8" fill="none" stroke="#0284c7" stroke-width="2"/>
+    <circle cx="15" cy="0" r="4" fill="#0369a1"/>
+    <circle cx="16" cy="-1" r="1.5" fill="#38bdf8"/>
+  </g>
+  
+  <!-- Text Label -->
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="14" font-weight="bold" 
+        text-anchor="middle" fill="#0369a1">WRITING DEFENSE</text>
+</svg>
