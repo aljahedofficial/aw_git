@@ -1,6 +1,6 @@
 # Writing Defense Platform
 
-A research tool designed to help L2 (second language) writers defend their authentic voice against AI detection bias and linguistic colonization.
+A research tool designed to help L2 (second language) writers defend their authentic voice against AI detection bias and linguistic homogenization.
 
 ## Overview
 
@@ -13,7 +13,7 @@ This platform provides:
 - **Stumble Detection**: Identifies cognitive effort zones with copy-paste filtering
 - **Source File Management**: Upload research sources to detect structural plagiarism
 - **Session Auto-save**: Automatic draft recovery
-- **🆕 Linguistic Colonization Analyzer**: Detect and resist AI voice replacement
+- **🆕 Linguistic Homogenization Analyzer**: Detect and resist AI voice replacement
 - **🆕 L2 Voice Preservation**: Protect authentic L2 grammatical structures
 - **🆕 Linguistic Audit Reports**: Professional PDF documentation of voice preservation
 
@@ -38,7 +38,7 @@ This platform provides:
 12. **🆕 L2 Voice Preservation Engine**: Protects L2-authentic grammatical structures
 13. **🆕 Dual-Text Comparison Tool**: Side-by-side analysis of original vs. AI-edited
 14. **🆕 Linguistic Identity Scoring**: Quantified voice preservation metric (0-100)
-15. **🆕 Colonization Heatmap**: Visual analysis of text standardization
+15. **🆕 Homogenization Heatmap**: Visual analysis of text standardization
 16. **🆕 PDF Audit Reports**: Professional reports documenting voice preservation
 17. **🆕 L2 Authenticity Preservation**: Flags valuable L1 transfer patterns
 

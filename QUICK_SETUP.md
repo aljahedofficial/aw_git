@@ -1,4 +1,4 @@
-# Quick Setup Guide - Linguistic Colonization Analyzer
+# Quick Setup Guide - Linguistic Homogenization Analyzer
 
 ## What's New?
 
@@ -174,8 +174,8 @@ Professional audit documents including:
 project/
 ├── src/
 │   └── components/
-│       ├── ColonizationAnalyzer.tsx   ← Main analyzer component
-│       └── ColonizationAnalyzer.css
+│       ├── HomogenizationAnalyzer.tsx   ← Main analyzer component
+│       └── HomogenizationAnalyzer.css
 ├── backend/
 │   ├── app.py                          ← Start here: python app.py
 │   ├── aitism_detector.py
@@ -186,20 +186,20 @@ project/
 │   ├── genericism_database.json
 │   └── requirements.txt
 └── docs/
-    ├── COLONIZATION_GUIDE.md           ← User guide
+    ├── HOMOGENIZATION_GUIDE.md           ← User guide
     ├── INTEGRATION_GUIDE.md            ← Developer guide
     └── QUICK_SETUP.md                  ← This file
 ```
 
 ## Learning More
 
-- **User Guide**: See [COLONIZATION_GUIDE.md](./COLONIZATION_GUIDE.md)
+- **User Guide**: See [HOMOGENIZATION_GUIDE.md](./HOMOGENIZATION_GUIDE.md)
 - **Developer Info**: See [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)
 - **Backend Details**: See [backend/README.md](../backend/README.md)
 
 ## Key Concepts
 
-### Linguistic Colonization
+### Linguistic Homogenization
 When AI editing replaces your authentic voice with generic standardized language. This analyzer helps you detect and prevent it.
 
 ### L2 Voice
@@ -213,7 +213,7 @@ The reference lexicon of 100+ common AI markers and generic academic phrases.
 
 ## Questions?
 
-Check the [User Guide](./COLONIZATION_GUIDE.md) FAQ section or review the [Integration Guide](./INTEGRATION_GUIDE.md) for technical questions.
+Check the [User Guide](./HOMOGENIZATION_GUIDE.md) FAQ section or review the [Integration Guide](./INTEGRATION_GUIDE.md) for technical questions.
 
 ---
 

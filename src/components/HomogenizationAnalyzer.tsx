@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './ColonizationAnalyzer.css';
+import './HomogenizationAnalyzer.css';
 
 const API_URL = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
 
-const ColonizationAnalyzer: React.FC = () => {
+const HomogenizationAnalyzer: React.FC = () => {
   const [originalText, setOriginalText] = useState('');
   const [editedText, setEditedText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -75,7 +75,7 @@ const ColonizationAnalyzer: React.FC = () => {
     return '#f44336'; // Red
   };
 
-  const getColonizationLevel = (score: number): string => {
+  const getHomogenizationLevel = (score: number): string => {
     if (score >= 70) return 'LOW - Voice Authentic';
     if (score >= 50) return 'MODERATE - Some Voice Loss';
     if (score >= 30) return 'HIGH - Significant Homogenization';
@@ -83,7 +83,7 @@ const ColonizationAnalyzer: React.FC = () => {
   };
 
   return (
-    <div className="colonization-analyzer">
+    <div className="homogenization-analyzer">
       <header className="analyzer-header">
         <h1>🔍 Linguistic Homogenization Analyzer</h1>
         <p>Detect AI interference & preserve your authentic voice</p>
@@ -139,7 +139,7 @@ const ColonizationAnalyzer: React.FC = () => {
                     </div>
                     <div className="score-info">
                       <div className="risk-level" style={{ color: getRiskColor(results.voice_preservation.overall_score) }}>
-                        {getColonizationLevel(results.voice_preservation.overall_score)}
+                        {getHomogenizationLevel(results.voice_preservation.overall_score)}
                       </div>
                       <p className="interpretation">{results.voice_preservation.interpretation}</p>
                     </div>
@@ -230,4 +230,4 @@ const ColonizationAnalyzer: React.FC = () => {
   );
 };
 
-export default ColonizationAnalyzer;
+export default HomogenizationAnalyzer;

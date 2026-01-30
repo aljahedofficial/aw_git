@@ -63,7 +63,7 @@ class LinguisticIdentityScorer:
         
         # Generate interpretation
         results['interpretation'] = self._interpret_score(results['overall_score'])
-        results['risk_level'] = self._assess_colonization_risk(results['overall_score'])
+        results['risk_level'] = self._assess_homogenization_risk(results['overall_score'])
         
         # Detailed metrics
         results['detailed_metrics'] = {
@@ -337,17 +337,17 @@ class LinguisticIdentityScorer:
         elif score >= 40:
             return "MODERATE: Significant AI intervention. Student voice present but compromised. Linguistic identity partially colonized."
         elif score >= 20:
-            return "CONCERNING: Heavy AI presence. Much of student's original voice replaced with generic language. Significant colonization detected."
+            return "CONCERNING: Heavy AI presence. Much of student's original voice replaced with generic language. Significant homogenization detected."
         else:
-            return "CRITICAL: Original voice largely erased. Text heavily AI-polished with minimal authentic student voice remaining. Severe linguistic colonization."
+            return "CRITICAL: Original voice largely erased. Text heavily AI-polished with minimal authentic student voice remaining. Severe linguistic homogenization."
     
-    def _assess_colonization_risk(self, score: float) -> str:
-        """Assess level of 'linguistic colonization'"""
+    def _assess_homogenization_risk(self, score: float) -> str:
+        """Assess level of 'linguistic homogenization'"""
         if score >= 70:
             return "LOW - Voice Authentic"
         elif score >= 50:
             return "MODERATE - Some Voice Loss"
         elif score >= 30:
-            return "HIGH - Significant Colonization"
+            return "HIGH - Significant Homogenization"
         else:
             return "CRITICAL - Voice Colonized"

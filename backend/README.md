@@ -33,7 +33,7 @@ This Python backend provides AI-ism detection, L2 voice preservation analysis, a
   - Stylistic Identity (personal style consistency)
   - Voice Consistency (uniformity across document)
   - Authenticity Markers (unique personal/L2 elements)
-- **Colonization Assessment**: Risk levels from "Low" to "Critical"
+- **Homogenization Assessment**: Risk levels from "Low" to "Critical"
 
 ### 5. PDF Report Generation
 - **Comprehensive Audit Reports**: Professional PDF output
@@ -228,7 +228,7 @@ console.log(`Score: ${results.voice_preservation.overall_score}/100`);
 |-------|-------|---------|
 | 80-100 | LOW Risk | Student used AI as a tool, voice strongly preserved |
 | 60-79 | MODERATE Risk | Some voice loss, but authentic elements remain |
-| 40-59 | HIGH Risk | Significant AI colonization, much voice lost |
+| 40-59 | HIGH Risk | Significant AI homogenization, much voice lost |
 | 20-39 | CRITICAL Risk | Heavy rewriting, minimal authentic voice |
 | 0-19 | SEVERE | Text essentially AI-generated |
 
@@ -268,7 +268,7 @@ console.log(`Score: ${results.voice_preservation.overall_score}/100`);
 4. **linguistic_identity_scorer.py**: Voice preservation scoring
    - 5-factor component analysis
    - Weighted composite scoring
-   - Colonization risk assessment
+   - Homogenization risk assessment
    - Authenticity evaluation
 
 5. **audit_report_generator.py**: PDF report generation

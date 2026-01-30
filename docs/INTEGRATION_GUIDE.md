@@ -9,7 +9,7 @@ This guide explains how the new AI-ism detection and voice preservation features
 ```
 ┌─────────────────────────────────────────────────────────┐
 │           React Frontend (Vite)                         │
-│         - ColonizationAnalyzer Component                │
+│         - HomogenizationAnalyzer Component                │
 │         - Dual-text input interface                     │
 │         - Results visualization                         │
 └──────────────────┬──────────────────────────────────────┘
@@ -36,11 +36,11 @@ This guide explains how the new AI-ism detection and voice preservation features
 
 ### Frontend Components
 
-#### ColonizationAnalyzer.tsx
+#### HomogenizationAnalyzer.tsx
 
 Main React component for the analyzer interface.
 
-**Location**: `src/components/ColonizationAnalyzer.tsx`
+**Location**: `src/components/HomogenizationAnalyzer.tsx`
 
 **Features**:
 - Dual text input (original + edited)
@@ -211,7 +211,7 @@ GET /api/markers
 ### 1. User Inputs Texts
 
 ```
-User types/pastes texts in ColonizationAnalyzer.tsx
+User types/pastes texts in HomogenizationAnalyzer.tsx
 │
 ├─ originalText: student's draft
 └─ editedText: AI-edited version
@@ -305,7 +305,7 @@ curl -X POST http://localhost:5000/analyze/full-audit \
       ...
     },
     "interpretation": "...",
-    "risk_level": "HIGH - Significant Colonization"
+    "risk_level": "HIGH - Significant Homogenization"
   },
   "text_comparison": {
     "summary": {...},
@@ -314,7 +314,7 @@ curl -X POST http://localhost:5000/analyze/full-audit \
   },
   "summary": {
     "overall_score": 45.3,
-    "risk_level": "HIGH - Significant Colonization",
+    "risk_level": "HIGH - Significant Homogenization",
     "aitism_score": 62.5
   }
 }
@@ -359,7 +359,7 @@ curl -X POST http://localhost:5000/analyze/full-audit \
    };
    ```
 
-4. **Integrate into ColonizationAnalyzer** or create new tab
+4. **Integrate into HomogenizationAnalyzer** or create new tab
 
 5. **Test**:
    ```bash
@@ -521,7 +521,7 @@ python -m spacy download en_core_web_sm
 ## Future Enhancements
 
 - [ ] Multi-language support (Spanish, Arabic, Mandarin)
-- [ ] Machine learning model for colonization prediction
+- [ ] Machine learning model for homogenization prediction
 - [ ] Real-time streaming analysis
 - [ ] Integration with GitHub for essay version control
 - [ ] Teacher dashboard for class-wide analysis

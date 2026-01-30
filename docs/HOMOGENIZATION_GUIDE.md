@@ -1,12 +1,12 @@
-# Linguistic Colonization Analyzer - User Guide
+# Linguistic Homogenization Analyzer - User Guide
 
 ## Overview
 
-The **Linguistic Colonization Analyzer** is a cutting-edge tool designed specifically for second language (L2) writers to understand and resist "linguistic colonization" — the process where AI editing tools replace a writer's authentic voice with generic, standardized language.
+The **Linguistic Homogenization Analyzer** is a cutting-edge tool designed specifically for second language (L2) writers to understand and resist "linguistic homogenization" — the process where AI editing tools replace a writer's authentic voice with generic, standardized language.
 
-## What is Linguistic Colonization?
+## What is Linguistic Homogenization?
 
-Linguistic colonization occurs when:
+Linguistic homogenization occurs when:
 - AI editing tools replace unique, personal language with formulaic phrases
 - A student's L1-influenced grammatical patterns are erased
 - Cultural references and metaphors are simplified
@@ -45,7 +45,7 @@ altered precipitation patterns, rising sea levels, and ecological disruption.
 Consequently, immediate intervention at scale becomes imperative.
 ```
 
-### Step 3: Click "Analyze for Colonization"
+### Step 3: Click "Analyze for Homogenization"
 
 The tool will process both texts and generate comprehensive analysis results.
 
@@ -59,7 +59,7 @@ Your main score shows how much of your authentic voice remains.
 |-------|--------|---------------|
 | 80-100 | ✓ LOW RISK | You used AI as a tool while keeping your authentic voice |
 | 60-79 | ⚠ MODERATE | Some simplification happened, but your core voice survives |
-| 40-59 | ⚠⚠ HIGH RISK | Significant AI colonization; much of your voice was replaced |
+| 40-59 | ⚠⚠ HIGH RISK | Significant AI homogenization; much of your voice was replaced |
 | 20-39 | ⚠⚠⚠ CRITICAL | Heavy rewriting; minimal authentic voice remains |
 | 0-19 | ⚠⚠⚠⚠ SEVERE | Text is mostly AI-generated; original voice erased |
 

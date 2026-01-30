@@ -84,7 +84,7 @@ After deploying the backend:
    npm run deploy
    ```
 
-3. Visit https://aljahedofficial.github.io/aw_git/ and test "Analyze for Colonization"
+3. Visit https://aljahedofficial.github.io/aw_git/ and test "Analyze for Homogenization"
 
 ---
 

@@ -1,8 +1,8 @@
-# 🚀 Getting Started - Linguistic Colonization Analyzer
+# 🚀 Getting Started - Linguistic Homogenization Analyzer
 
 ## What You Just Got
 
-A complete **Linguistic Colonization Detection System** for your Writing Defense Platform that helps L2 (second language) writers understand and protect their authentic voice when using AI editing tools.
+A complete **Linguistic Homogenization Detection System** for your Writing Defense Platform that helps L2 (second language) writers understand and protect their authentic voice when using AI editing tools.
 
 ## What It Does
 
@@ -76,7 +76,7 @@ You should see:
 2. Click the **"AI Analyzer"** tab
 3. Paste your original draft in the left box
 4. Paste the AI-edited version in the right box
-5. Click **"Analyze for Colonization"**
+5. Click **"Analyze for Homogenization"**
 6. 🎉 See your results!
 
 ## 📊 Understanding Your Score
@@ -124,9 +124,9 @@ This isn't a tool to police your writing—it's a tool to help you understand an
 ```
 Start Backend:    backend/app.py
 Start Frontend:   npm run dev
-Analyzer Tab:     src/components/ColonizationAnalyzer.tsx
+Analyzer Tab:     src/components/HomogenizationAnalyzer.tsx
 
-User Guide:       docs/COLONIZATION_GUIDE.md
+User Guide:       docs/HOMOGENIZATION_GUIDE.md
 Dev Guide:        docs/INTEGRATION_GUIDE.md
 Quick Help:       QUICK_SETUP.md
 ```
@@ -154,14 +154,14 @@ See [QUICK_SETUP.md](./QUICK_SETUP.md) troubleshooting section.
 
 ## 📚 Learn More
 
-- **How to use it**: [COLONIZATION_GUIDE.md](./docs/COLONIZATION_GUIDE.md)
+- **How to use it**: [HOMOGENIZATION_GUIDE.md](./docs/HOMOGENIZATION_GUIDE.md)
 - **For developers**: [INTEGRATION_GUIDE.md](./docs/INTEGRATION_GUIDE.md)
 - **Technical details**: [backend/README.md](./backend/README.md)
 - **Complete summary**: [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)
 
 ## 🎯 Key Concepts
 
-### Linguistic Colonization
+### Linguistic Homogenization
 When AI editing replaces YOUR authentic voice with generic standardized language. This tool helps you detect and resist it.
 
 ### L2 Voice
@@ -203,7 +203,7 @@ Unlike generic plagiarism checkers, this system:
 | Question | Answer |
 |----------|--------|
 | How do I start? | Run `./backend/setup.sh` then `python app.py` |
-| How do I use it? | Read [COLONIZATION_GUIDE.md](./docs/COLONIZATION_GUIDE.md) |
+| How do I use it? | Read [HOMOGENIZATION_GUIDE.md](./docs/HOMOGENIZATION_GUIDE.md) |
 | How does it work? | See [INTEGRATION_GUIDE.md](./docs/INTEGRATION_GUIDE.md) |
 | What if I get stuck? | Check [QUICK_SETUP.md](./QUICK_SETUP.md) troubleshooting |
 | Can I deploy it? | Yes! See [backend/README.md](./backend/README.md) deployment section |

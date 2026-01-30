@@ -70,7 +70,7 @@ class AuditReportGenerator:
                             voice_preservation: Dict,
                             l2_voice_analysis: Dict,
                             comparison_data: Dict,
-                            colonization_heatmap_data: Dict = None) -> None:
+                            homogenization_heatmap_data: Dict = None) -> None:
         """
         Generate comprehensive linguistic audit report
         
@@ -82,7 +82,7 @@ class AuditReportGenerator:
             voice_preservation: Linguistic identity scores
             l2_voice_analysis: L2 voice preservation analysis
             comparison_data: Dual-text comparison data
-            colonization_heatmap_data: Heatmap visualization data
+            homogenization_heatmap_data: Heatmap visualization data
         """
         doc = SimpleDocTemplate(
             output_file,
@@ -139,7 +139,7 @@ class AuditReportGenerator:
             self.styles['CustomTitle']
         ))
         elements.append(Paragraph(
-            "Student Voice Analysis & AI Colonization Assessment",
+            "Student Voice Analysis & AI Homogenization Assessment",
             self.styles['Heading2']
         ))
         
@@ -153,7 +153,7 @@ class AuditReportGenerator:
         
         score_data = [
             ['Overall Voice Preservation Score', f'{score}/100'],
-            ['Colonization Risk Level', risk],
+            ['Homogenization Risk Level', risk],
             ['Report Generated', datetime.now().strftime('%B %d, %Y')]
         ]
         
@@ -212,10 +212,10 @@ class AuditReportGenerator:
         elements.append(Spacer(1, 0.2*inch))
         
         # Risk assessment
-        elements.append(Paragraph("Colonization Risk Assessment", self.styles['CustomHeading']))
+        elements.append(Paragraph("Homogenization Risk Assessment", self.styles['CustomHeading']))
         risk_level = voice_results.get('risk_level', 'Unknown')
         
-        risk_text = f"This document presents a <b>{risk_level}</b> level of linguistic colonization. "
+        risk_text = f"This document presents a <b>{risk_level}</b> level of linguistic homogenization. "
         
         if 'AUTHENTIC' in risk_level:
             risk_text += "The student's original voice is strongly preserved throughout the document."
@@ -474,7 +474,7 @@ class AuditReportGenerator:
         else:
             rec_text = (
                 "<b>Recommendation: REJECT - REWRITE REQUIRED</b><br/><br/>"
-                "This document shows severe linguistic colonization. The student's original voice "
+                "This document shows severe linguistic homogenization. The student's original voice "
                 "has been largely erased. The student should start with their original draft and "
                 "make targeted edits rather than relying on AI polishing tools."
             )
@@ -521,7 +521,7 @@ class AuditReportGenerator:
             "<b>L2 Voice Analysis:</b> Identifies and protects L2-authentic grammatical patterns, "
             "cultural references, and L1 transfer features that indicate genuine student expression. "
             "Flags when AI editing has erased these elements.<br/><br/>"
-            "<b>Linguistic Colonization:</b> Refers to the process where AI editing replaces a student's "
+            "<b>Linguistic Homogenization:</b> Refers to the process where AI editing replaces a student's "
             "authentic linguistic identity with standardized, generic language. This audit tool helps "
             "students reclaim agency over their own voice in academic writing."
         )

@@ -2,7 +2,7 @@
 ║                  IMPLEMENTATION COMPLETE - PROJECT SUMMARY                   ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-🎉 LINGUISTIC COLONIZATION ANALYZER - FULLY IMPLEMENTED & INTEGRATED
+🎉 LINGUISTIC HOMOGENIZATION ANALYZER - FULLY IMPLEMENTED & INTEGRATED
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -84,11 +84,11 @@
   └── backend/README.md
 
   Frontend (2 files):
-  ├── src/components/ColonizationAnalyzer.tsx
-  └── src/components/ColonizationAnalyzer.css
+  ├── src/components/HomogenizationAnalyzer.tsx
+  └── src/components/HomogenizationAnalyzer.css
 
   Documentation (6 files):
-  ├── docs/COLONIZATION_GUIDE.md (User guide)
+  ├── docs/HOMOGENIZATION_GUIDE.md (User guide)
   ├── docs/INTEGRATION_GUIDE.md (Developer guide)
   ├── QUICK_SETUP.md
   ├── IMPLEMENTATION_SUMMARY.md
@@ -148,7 +148,7 @@
   Voice Preservation Score (Main Metric):
   • 80-100: LOW RISK - Voice Authentic ✓
   • 60-79:  MODERATE - Some Voice Loss ⚠
-  • 40-59:  HIGH RISK - Significant Colonization ⚠⚠
+  • 40-59:  HIGH RISK - Significant Homogenization ⚠⚠
   • 20-39:  CRITICAL - Voice Colonized ⚠⚠⚠
   • 0-19:   SEVERE - Voice Lost ✗
 
@@ -187,14 +187,14 @@
 
   5. Analyze:
      Paste original draft + AI-edited version
-     Click "Analyze for Colonization"
+     Click "Analyze for Homogenization"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📖 KEY FILES
 
   Quick Start:      START_HERE.md
-  User Guide:       docs/COLONIZATION_GUIDE.md
+  User Guide:       docs/HOMOGENIZATION_GUIDE.md
   Dev Guide:        docs/INTEGRATION_GUIDE.md
   Backend Docs:     backend/README.md
   Setup Help:       QUICK_SETUP.md

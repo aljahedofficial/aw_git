@@ -13,7 +13,7 @@ FINAL VERSION WITH CRITICAL ADDITIONS
 
 
 Brain: User-specific linguistic fingerprinting engine with research-grade provenance
-Purpose: Establish "authentic voice" baseline to distinguish L2 development from AI colonization
+Purpose: Establish "authentic voice" baseline to distinguish L2 development from AI homogenization
 Output: Personal linguistic profile with full metadata for reproducibility
 
 
@@ -745,7 +745,7 @@ L1 interference patterns (optional):
 
 Over-correction detection:
   Problem: As L2 writers develop, they sometimes over-correct toward "English norms"
-           This can become colonization: abandoning authentic voice for hyper-formal register
+           This can become homogenization: abandoning authentic voice for hyper-formal register
   Solution: Detect and warn
 
 
@@ -753,7 +753,7 @@ Algorithm:
   ├─ Baseline includes "L1-influenced patterns" (user's authentic stylistic tendencies)
   ├─ If user suddenly abandons those patterns (e.g., stops using topic-comment structure)
   ├─ AND variance decreases (writing becomes more homogeneous)
-  ├─ AND matches "highly formal academic corpus" → Flag as potential colonization
+  ├─ AND matches "highly formal academic corpus" → Flag as potential homogenization
   └─ Alert: "Your writing has become more formal. Is this intentional growth, or pressure to conform?"
 
 
@@ -1237,7 +1237,7 @@ Long-term (1+ years):
   ├─ [ ] Longitudinal study (track 100+ students over 1 year)
   ├─ [ ] Open-source release (community can build on tool)
   ├─ [ ] Partner with universities (integrate into writing centers)
-  └─ [ ] Publish comprehensive theory paper (colonization framework)
+  └─ [ ] Publish comprehensive theory paper (homogenization framework)
 
 
 ---
