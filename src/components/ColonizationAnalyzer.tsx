@@ -1,30 +1,6 @@
 import React, { useState } from 'react';
 import './ColonizationAnalyzer.css';
 
-interface AnalysisResults {
-  overall_score: number;
-  risk_level: string;
-  component_scores: {
-    lexical_identity: number;
-    structural_identity: number;
-    stylistic_identity: number;
-    voice_consistency: number;
-    authenticity_markers: number;
-  };
-  interpretation: string;
-  detailed_metrics: Record<string, any>;
-}
-
-interface AIismResults {
-  ai_ism_score: number;
-  risk_level: string;
-  high_frequency_phrases: Array<[number, number, string]>;
-  academic_clichés: Array<[number, number, string]>;
-  transition_abuse: Array<[number, number, string]>;
-  generic_openers: Array<[number, number, string]>;
-  explanation: string;
-}
-
 const ColonizationAnalyzer: React.FC = () => {
   const [originalText, setOriginalText] = useState('');
   const [editedText, setEditedText] = useState('');
