@@ -223,7 +223,7 @@ class AuditReportGenerator:
             risk_text += "While the student's core voice remains, some simplification has occurred."
         elif 'SIGNIFICANT' in risk_level:
             risk_text += "The document has undergone substantial AI-driven polishing that has erased much of the student's authentic voice."
-        elif 'COLONIZED' in risk_level:
+        elif 'HOMOGENIZED' in risk_level:
             risk_text += "The document has been heavily transformed by AI editing, with minimal traces of the student's original linguistic identity."
         
         elements.append(Paragraph(risk_text, self.styles['CustomBody']))
@@ -321,7 +321,7 @@ class AuditReportGenerator:
             "This section examines how much of the student's original linguistic identity "
             "has been preserved in the edited version. A high score indicates that the student "
             "used AI as a tool while maintaining their authentic voice. A low score suggests "
-            "that AI editing has 'colonized' the text, replacing the student's original expression "
+            "that AI editing has 'homogenized' the text, replacing the student's original expression "
             "with generic, standardized academic language."
         )
         

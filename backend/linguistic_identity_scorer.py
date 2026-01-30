@@ -24,7 +24,7 @@ class LinguisticIdentityScorer:
         Calculate how much student voice is preserved
         
         High score = Student used AI as a tool (voice intact)
-        Low score = AI colonized the text (voice replaced)
+        Low score = AI homogenized the text (voice replaced)
         
         Scale: 0-100
         """
@@ -335,7 +335,7 @@ class LinguisticIdentityScorer:
         elif score >= 60:
             return "GOOD: AI editing occurred but student voice largely intact. Some authentic elements simplified."
         elif score >= 40:
-            return "MODERATE: Significant AI intervention. Student voice present but compromised. Linguistic identity partially colonized."
+            return "MODERATE: Significant AI intervention. Student voice present but compromised. Linguistic identity partially homogenized."
         elif score >= 20:
             return "CONCERNING: Heavy AI presence. Much of student's original voice replaced with generic language. Significant homogenization detected."
         else:
@@ -350,4 +350,4 @@ class LinguisticIdentityScorer:
         elif score >= 30:
             return "HIGH - Significant Homogenization"
         else:
-            return "CRITICAL - Voice Colonized"
+            return "CRITICAL - Voice Homogenized"
