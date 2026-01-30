@@ -212,10 +212,10 @@ def generate_report():
         data = request.get_json()
         original = data.get('original', '')
         edited = data.get('edited', '')
-        aitism_results = data.get('aitism_results', {})
+        aitism_results = data.get('aitism_results') or data.get('aitism_analysis') or {}
         voice_preservation = data.get('voice_preservation', {})
         l2_voice_analysis = data.get('l2_voice_analysis', {})
-        comparison_data = data.get('comparison_data', {})
+        comparison_data = data.get('comparison_data') or data.get('text_comparison') or {}
         
         if not original or not edited:
             return jsonify({'error': 'Both original and edited text required'}), 400
