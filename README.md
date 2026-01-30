@@ -1,6 +1,6 @@
 # Writing Defense Platform
 
-A research tool designed to help L2 (second language) writers defend their authentic voice against AI detection bias.
+A research tool designed to help L2 (second language) writers defend their authentic voice against AI detection bias and linguistic colonization.
 
 ## Overview
 
@@ -13,6 +13,9 @@ This platform provides:
 - **Stumble Detection**: Identifies cognitive effort zones with copy-paste filtering
 - **Source File Management**: Upload research sources to detect structural plagiarism
 - **Session Auto-save**: Automatic draft recovery
+- **🆕 Linguistic Colonization Analyzer**: Detect and resist AI voice replacement
+- **🆕 L2 Voice Preservation**: Protect authentic L2 grammatical structures
+- **🆕 Linguistic Audit Reports**: Professional PDF documentation of voice preservation
 
 ## Features
 
@@ -29,25 +32,40 @@ This platform provides:
 9. **Baseline Calibration**: Research-grade metadata tracking
 10. **Session Recovery**: Auto-save and crash recovery
 
+### New Features (Phase 1B)
+
+11. **🆕 AI-ism Detection System**: Identifies AI markers and generic language patterns
+12. **🆕 L2 Voice Preservation Engine**: Protects L2-authentic grammatical structures
+13. **🆕 Dual-Text Comparison Tool**: Side-by-side analysis of original vs. AI-edited
+14. **🆕 Linguistic Identity Scoring**: Quantified voice preservation metric (0-100)
+15. **🆕 Colonization Heatmap**: Visual analysis of text standardization
+16. **🆕 PDF Audit Reports**: Professional reports documenting voice preservation
+17. **🆕 L2 Authenticity Preservation**: Flags valuable L1 transfer patterns
+
 ## Technology Stack
 
 - **Frontend**: React 18 + TypeScript
 - **Editor**: TipTap (rich text editor)
 - **Visualization**: Recharts
 - **Storage**: LocalStorage + IndexedDB
-- **NLP**: Compromise.js (client-side)
+- **NLP (Frontend)**: Compromise.js (client-side)
+- **Backend**: Python 3.11+ with Flask
+- **NLP (Backend)**: spaCy, NLTK
+- **Comparison**: difflib
+- **Readability**: textstat
+- **PDF Generation**: ReportLab
 - **OCR**: Tesseract.js
-- **PDF**: PDF.js
 - **Styling**: Tailwind CSS
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
+- **Node.js** 18+ 
+- **npm** or **yarn**
+- **Python 3.11+** (for backend analysis features)
 
-### Installation
+### Frontend Installation
 
 ```bash
 # Install dependencies
@@ -62,6 +80,37 @@ npm run build
 # Preview production build
 npm run preview
 ```
+
+### Backend Installation (Optional but Recommended)
+
+For the new AI-ism detection and voice preservation features:
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Run setup script
+chmod +x setup.sh
+./setup.sh
+
+# Or manually:
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 -m spacy download en_core_web_sm
+python3 -m nltk.downloader punkt stopwords
+
+# Start backend server (in separate terminal)
+python app.py
+```
+
+The backend will run on `http://localhost:5000` and the frontend will proxy requests to it.
+
+### Accessing the Application
+
+1. Start the frontend: `npm run dev` (http://localhost:3000)
+2. Start the backend: `python app.py` (http://localhost:5000)
+3. Navigate to the **"AI Analyzer"** tab to use new features
 
 The app will be available at `http://localhost:3000`
 

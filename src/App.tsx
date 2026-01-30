@@ -9,11 +9,12 @@ import ResearcherDashboard from './components/ResearcherDashboard'
 import AdvancedBurstinessDetector from './components/AdvancedBurstinessDetector'
 import SentenceLengthDistribution from './components/SentenceLengthDistribution'
 import ThemeSelector from './components/ThemeSelector'
-import { FileText, Activity, Target, FileUp, BarChart2 } from 'lucide-react'
+import ColonizationAnalyzer from './components/ColonizationAnalyzer'
+import { FileText, Activity, Target, FileUp, BarChart2, Zap } from 'lucide-react'
 import { getStoredTheme, applyTheme, themes } from './utils/themes'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'editor' | 'baseline' | 'sources' | 'dashboard'>('editor')
+  const [activeTab, setActiveTab] = useState<'editor' | 'baseline' | 'sources' | 'dashboard' | 'colonization'>('editor')
   const [editorText, setEditorText] = useState('')
   const [metrics, setMetrics] = useState({
     humanityScore: 75,
@@ -111,6 +112,17 @@ function App() {
               <BarChart2 className="w-4 h-4" />
               <span>Dashboard</span>
             </button>
+            <button
+              onClick={() => setActiveTab('colonization')}
+              className={`flex items-center space-x-2 px-4 py-3 border-b-2 transition-colors font-medium`}
+              style={{
+                borderColor: activeTab === 'colonization' ? 'var(--color-primary)' : 'transparent',
+                color: activeTab === 'colonization' ? 'var(--color-primary)' : 'var(--color-text-secondary)'
+              }}
+            >
+              <Zap className="w-4 h-4" />
+              <span>AI Analyzer</span>
+            </button>
           </div>
         </div>
       </nav>
@@ -139,6 +151,7 @@ function App() {
         {activeTab === 'baseline' && <BaselineManager />}
         {activeTab === 'sources' && <SourceManager />}
         {activeTab === 'dashboard' && <ResearcherDashboard />}
+        {activeTab === 'colonization' && <ColonizationAnalyzer />}
       </main>
 
       {/* Footer */}

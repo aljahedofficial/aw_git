@@ -1,0 +1,105 @@
+{
+  "ai_markers": {
+    "high_frequency": [
+      "In the ever-evolving landscape",
+      "Furthermore",
+      "It is important to note",
+      "In conclusion",
+      "To summarize",
+      "In today's world",
+      "As society continues to evolve",
+      "This is evident",
+      "It is evident that",
+      "In light of",
+      "Given the current state",
+      "One might argue",
+      "Needless to say",
+      "As previously mentioned",
+      "In any case",
+      "All in all",
+      "When all is said and done",
+      "For the most part",
+      "In general",
+      "By and large"
+    ],
+    "formulaic_structures": [
+      "^(The|This|It) (is|has) (been|become) (a|an|the)",
+      "^(In|On|At) (the|a|an) (context|backdrop|realm)",
+      "^(With|Due to|Because of) (the|this|an)",
+      "^(As (a|the)|Thus|Therefore)",
+      "^(In (light|view|terms) of|Considering)"
+    ],
+    "hedging_qualifiers": [
+      "arguably",
+      "perhaps",
+      "possibly",
+      "seemingly",
+      "apparently",
+      "conceivably",
+      "ostensibly",
+      "allegedly"
+    ],
+    "academic_clichés": [
+      "the bottom line",
+      "the tip of the iceberg",
+      "at the end of the day",
+      "the fact that",
+      "the reality is",
+      "in point of fact",
+      "it goes without saying",
+      "last but not least"
+    ],
+    "transition_abuse": [
+      "However",
+      "Moreover",
+      "Additionally",
+      "Subsequently",
+      "Consequently",
+      "Hence",
+      "Thus",
+      "Therefore"
+    ],
+    "generic_openers": [
+      "It is widely known",
+      "It is universally accepted",
+      "Throughout history",
+      "In modern society",
+      "The question arises",
+      "One might wonder",
+      "It is undeniable"
+    ],
+    "l2_interference_markers": {
+      "chinese": [
+        "very very",
+        "should must",
+        "can can",
+        "make + noun form"
+      ],
+      "spanish": [
+        "for + infinitive purpose",
+        "since + present tense",
+        "actually/in fact overuse"
+      ],
+      "arabic": [
+        "waṭan (homeland) emphasis",
+        "root repetition patterns",
+        "classical register shifts"
+      ]
+    }
+  },
+  "voice_preservation_markers": {
+    "valid_l2_structures": [
+      "Subject-OV word order with focus",
+      "Aspect marking differences",
+      "Serial verb constructions",
+      "Classifier systems in nouns",
+      "Topic-prominent sentences"
+    ],
+    "cultural_metaphors": [
+      "family-based figurative language",
+      "nature-based imagery from specific regions",
+      "historical references to home country",
+      "proverbs and cultural wisdom"
+    ]
+  }
+}
