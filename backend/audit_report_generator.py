@@ -146,8 +146,8 @@ class AuditReportGenerator:
         elements.append(Spacer(1, 0.5*inch))
         
         # Overall score box
-        score = voice_results['overall_score']
-        risk = voice_results['risk_level']
+        score = voice_results.get('overall_score', 0)
+        risk = voice_results.get('risk_level', 'Unknown')
         
         score_color = self._get_score_color(score)
         
@@ -205,7 +205,7 @@ class AuditReportGenerator:
         elements.append(Spacer(1, 0.3*inch))
         
         # Main finding
-        interpretation = voice_results['interpretation']
+        interpretation = voice_results.get('interpretation', 'No interpretation available')
         elements.append(Paragraph("Overall Finding", self.styles['CustomHeading']))
         elements.append(Paragraph(interpretation, self.styles['CriticalHighlight']))
         
@@ -213,7 +213,7 @@ class AuditReportGenerator:
         
         # Risk assessment
         elements.append(Paragraph("Colonization Risk Assessment", self.styles['CustomHeading']))
-        risk_level = voice_results['risk_level']
+        risk_level = voice_results.get('risk_level', 'Unknown')
         
         risk_text = f"This document presents a <b>{risk_level}</b> level of linguistic colonization. "
         
@@ -233,14 +233,14 @@ class AuditReportGenerator:
         # Component breakdown
         elements.append(Paragraph("Component Scores", self.styles['CustomHeading']))
         
-        components = voice_results['component_scores']
+        components = voice_results.get('component_scores', {})
         comp_data = [
             ['Component', 'Score', 'Assessment'],
-            ['Lexical Identity', f"{components['lexical_identity']:.1f}/100", self._score_assessment(components['lexical_identity'])],
-            ['Structural Identity', f"{components['structural_identity']:.1f}/100", self._score_assessment(components['structural_identity'])],
-            ['Stylistic Identity', f"{components['stylistic_identity']:.1f}/100", self._score_assessment(components['stylistic_identity'])],
-            ['Voice Consistency', f"{components['voice_consistency']:.1f}/100", self._score_assessment(components['voice_consistency'])],
-            ['Authenticity Markers', f"{components['authenticity_markers']:.1f}/100", self._score_assessment(components['authenticity_markers'])]
+            ['Lexical Identity', f"{components.get('lexical_identity', 0):.1f}/100", self._score_assessment(components.get('lexical_identity', 0))],
+            ['Structural Identity', f"{components.get('structural_identity', 0):.1f}/100", self._score_assessment(components.get('structural_identity', 0))],
+            ['Stylistic Identity', f"{components.get('stylistic_identity', 0):.1f}/100", self._score_assessment(components.get('stylistic_identity', 0))],
+            ['Voice Consistency', f"{components.get('voice_consistency', 0):.1f}/100", self._score_assessment(components.get('voice_consistency', 0))],
+            ['Authenticity Markers', f"{components.get('authenticity_markers', 0):.1f}/100", self._score_assessment(components.get('authenticity_markers', 0))]
         ]
         
         comp_table = Table(comp_data, colWidths=[2*inch, 1*inch, 2*inch])
@@ -266,8 +266,8 @@ class AuditReportGenerator:
         elements.append(Spacer(1, 0.2*inch))
         
         elements.append(Paragraph("Overall AI-ism Score", self.styles['CustomHeading']))
-        score = aitism_results['ai_ism_score']
-        risk = aitism_results['risk_level']
+        score = aitism_results.get('ai_ism_score', 0)
+        risk = aitism_results.get('risk_level', 'Unknown')
         
         elements.append(Paragraph(
             f"<b>Score: {score:.1f}/100</b> | <b>Risk Level: {risk.upper()}</b>",
@@ -332,14 +332,14 @@ class AuditReportGenerator:
         # Detailed metrics
         elements.append(Paragraph("Preservation Metrics", self.styles['CustomHeading']))
         
-        metrics = voice_results['detailed_metrics']
+        metrics = voice_results.get('detailed_metrics', {})
         metrics_data = [
             ['Metric', 'Value'],
-            ['Original Word Count', str(metrics['original_word_count'])],
-            ['Edited Word Count', str(metrics['edited_word_count'])],
-            ['Retained Unique Words', str(metrics['retained_unique_words'])],
-            ['Retained Sentence Patterns', str(metrics['retained_sentence_patterns'])],
-            ['AI Phrase Penetration', f"{100 - metrics['ai_phrase_infiltration']:.1f}%"]
+            ['Original Word Count', str(metrics.get('original_word_count', 0))],
+            ['Edited Word Count', str(metrics.get('edited_word_count', 0))],
+            ['Retained Unique Words', str(metrics.get('retained_unique_words', 0))],
+            ['Retained Sentence Patterns', str(metrics.get('retained_sentence_patterns', 0))],
+            ['AI Phrase Penetration', f"{100 - metrics.get('ai_phrase_infiltration', 0):.1f}%"]
         ]
         
         metrics_table = Table(metrics_data, colWidths=[2.5*inch, 1.5*inch])
@@ -364,20 +364,20 @@ class AuditReportGenerator:
         elements.append(Spacer(1, 0.2*inch))
         
         # Summary statistics
-        stats = comparison_data['statistics']
+        stats = comparison_data.get('statistics', {})
         
         elements.append(Paragraph("Change Statistics", self.styles['CustomHeading']))
         
         change_data = [
             ['Metric', 'Original', 'Edited', 'Change'],
-            ['Word Count', str(stats['original_word_count']), str(stats['edited_word_count']), 
-             f"{stats['word_count_change']:+d}"],
-            ['Character Count', str(stats['original_char_count']), str(stats['edited_char_count']),
-             f"{stats['char_count_change']:+d}"],
+            ['Word Count', str(stats.get('original_word_count', 0)), str(stats.get('edited_word_count', 0)), 
+             f"{stats.get('word_count_change', 0):+d}"],
+            ['Character Count', str(stats.get('original_char_count', 0)), str(stats.get('edited_char_count', 0)),
+             f"{stats.get('char_count_change', 0):+d}"],
             ['Average Word Length', 
-             f"{stats['readability_impact']['original_avg_word_length']:.2f}",
-             f"{stats['readability_impact']['edited_avg_word_length']:.2f}",
-             f"{stats['readability_impact']['complexity_magnitude']:+.2f}"]
+             f"{stats.get('readability_impact', {}).get('original_avg_word_length', 0):.2f}",
+             f"{stats.get('readability_impact', {}).get('edited_avg_word_length', 0):.2f}",
+             f"{stats.get('readability_impact', {}).get('complexity_magnitude', 0):+.2f}"]
         ]
         
         change_table = Table(change_data, colWidths=[1.5*inch, 1*inch, 1*inch, 1.5*inch])
@@ -393,15 +393,15 @@ class AuditReportGenerator:
         elements.append(change_table)
         
         # Change summary
-        changes = comparison_data['changes']
+        changes = comparison_data.get('changes', {})
         elements.append(Spacer(1, 0.2*inch))
         elements.append(Paragraph("Change Summary", self.styles['CustomHeading']))
         
         summary_text = (
-            f"The edited version contains <b>{changes['total_additions']} additions</b>, "
-            f"<b>{changes['total_deletions']} deletions</b>, and "
-            f"<b>{changes['total_modifications']} modifications</b>. "
-            f"Overall, <b>{comparison_data['summary']['change_percentage']:.1f}%</b> of the text "
+            f"The edited version contains <b>{changes.get('total_additions', 0)} additions</b>, "
+            f"<b>{changes.get('total_deletions', 0)} deletions</b>, and "
+            f"<b>{changes.get('total_modifications', 0)} modifications</b>. "
+            f"Overall, <b>{comparison_data.get('summary', {}).get('change_percentage', 0):.1f}%</b> of the text "
             "has been modified from the original."
         )
         
@@ -487,7 +487,7 @@ class AuditReportGenerator:
         
         action_items = []
         
-        if aitism_results['ai_ism_score'] > 30:
+        if aitism_results.get('ai_ism_score', 0) > 30:
             action_items.append("Replace high-frequency AI phrases with authentic student voice")
         
         if l2_results.get('lost_structures'):
