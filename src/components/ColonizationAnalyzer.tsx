@@ -78,14 +78,14 @@ const ColonizationAnalyzer: React.FC = () => {
   const getColonizationLevel = (score: number): string => {
     if (score >= 70) return 'LOW - Voice Authentic';
     if (score >= 50) return 'MODERATE - Some Voice Loss';
-    if (score >= 30) return 'HIGH - Significant Colonization';
-    return 'CRITICAL - Voice Colonized';
+    if (score >= 30) return 'HIGH - Significant Homogenization';
+    return 'CRITICAL - Voice Homogenized';
   };
 
   return (
     <div className="colonization-analyzer">
       <header className="analyzer-header">
-        <h1>🔍 Linguistic Colonization Analyzer</h1>
+        <h1>🔍 Linguistic Homogenization Analyzer</h1>
         <p>Detect AI interference & preserve your authentic voice</p>
       </header>
 
@@ -119,7 +119,7 @@ const ColonizationAnalyzer: React.FC = () => {
               onClick={handleAnalyze}
               disabled={isAnalyzing}
             >
-              {isAnalyzing ? 'Analyzing...' : 'Analyze for Colonization'}
+              {isAnalyzing ? 'Analyzing...' : 'Analyze for Homogenization'}
             </button>
           </div>
         ) : (
