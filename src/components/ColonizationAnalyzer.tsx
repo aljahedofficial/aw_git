@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './ColonizationAnalyzer.css';
 
+const API_URL = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
+
 const ColonizationAnalyzer: React.FC = () => {
   const [originalText, setOriginalText] = useState('');
   const [editedText, setEditedText] = useState('');
@@ -16,7 +18,7 @@ const ColonizationAnalyzer: React.FC = () => {
 
     setIsAnalyzing(true);
     try {
-      const response = await fetch('/api/analyze/full-audit', {
+      const response = await fetch(`${API_URL}/analyze/full-audit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -42,7 +44,7 @@ const ColonizationAnalyzer: React.FC = () => {
     if (!results) return;
 
     try {
-      const response = await fetch('/api/generate-report', {
+      const response = await fetch(`${API_URL}/generate-report`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
